@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 import { existsSync, readFileSync, writeFileSync, readdirSync, rmSync, cpSync, mkdirSync } from 'fs';
 import { JiraClient } from '../utils/jira-client.js';
 import { issuesToTaskFiles } from '../utils/jira-to-task.js';
-import { chatStream, getActiveConfig } from '../utils/llm-client.js';
+import { chatStream, getActiveConfig, getOkfContext, reloadEnv } from '../utils/llm-client.js';
 import { readConcept, buildGraph, checkStaleness } from '../okf-utils/okf-reader.js';
 import { generateOkfFromStory, generateOkfFromJiraIssue, saveOkfFile, listOkfFiles } from '../okf-utils/okf-generator.js';
 import { updateObjectSelectors, batchUpdateSelectors } from '../okf-utils/okf-selector-updater.js';
@@ -115,6 +115,7 @@ app.post('/api/env', (req, res) => {
   try {
     const envPath = path.join(ROOT, '.env');
     writeFileSync(envPath, req.body.content, 'utf8');
+    reloadEnv(); // Reload env vars immediately
     res.json({ success: true });
   } catch (e) {
     res.json({ success: false, error: e.message });
@@ -210,6 +211,7 @@ const AGENTS = [
 
 // API: List available agents
 app.get('/api/agents', (req, res) => {
+  reloadEnv(); // Reload .env to pick up changes
   const config = getActiveConfig();
   res.json({ agents: AGENTS, llm: config });
 });
@@ -389,7 +391,7 @@ app.get('/api/okf/staleness', (req, res) => {
 
 app.post('/api/okf/generate', (req, res) => {
   try {
-    const { objectName, storyContent, fields, relationships, isCustom } = req.body;
+    const { objectName, storyContent, fields, relationships, isCustom, mode, storyId } = req.body;
     
     if (!objectName) {
       return res.json({ success: false, error: 'objectName is required' });
@@ -401,7 +403,7 @@ app.post('/api/okf/generate', (req, res) => {
       isCustom: isCustom !== false
     });
     
-    const filePath = saveOkfFile(objectName, content);
+    const filePath = saveOkfFile(objectName, content, { mode, storyId });
     res.json({ 
       success: true, 
       path: path.relative(ROOT, filePath),
@@ -554,6 +556,16 @@ async function handleLlmChat(msg, ws) {
 
     // Build messages array
     const messages = [{ role: 'system', content: systemPrompt }];
+
+    // Automatically inject OKF context for agents
+    try {
+      const okfContext = getOkfContext();
+      if (okfContext) {
+        messages[0].content += '\n\n## OKF Knowledge Base\nThe following OKF files contain Salesforce object schemas, selectors, and patterns:\n\n' + okfContext;
+      }
+    } catch (e) {
+      // OKF not available, continue without it
+    }
 
     // Load referenced file contents
     let fileContext = '';

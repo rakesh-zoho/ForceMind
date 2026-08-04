@@ -162,17 +162,81 @@ ${issue.fields || 'To be determined during implementation'}
 }
 
 /**
- * Save OKF file
+ * Save OKF file - merges with existing if present
+ * @param {string} objectName - Salesforce object name
+ * @param {string} content - New OKF content
+ * @param {object} options - { mode: 'merge'|'replace'|'version', storyId: string }
  */
-export function saveOkfFile(objectName, content) {
-  const fileName = objectName.toLowerCase().replace(/[^a-z0-9]/g, '-') + '.md';
+export function saveOkfFile(objectName, content, options = {}) {
+  const { mode = 'merge', storyId = '' } = options;
+  const baseName = objectName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+  const fileName = storyId ? `${baseName}-${storyId.toLowerCase().replace(/[^a-z0-9]/g, '-')}.md` : `${baseName}.md`;
   const filePath = path.join(OKF_PATH, 'salesforce', fileName);
   
-  // Ensure directory exists
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   
+  if (mode === 'version' && fs.existsSync(filePath)) {
+    // Create versioned file: case-v2.md, case-v3.md, etc.
+    let version = 2;
+    let versionedPath;
+    do {
+      versionedPath = path.join(OKF_PATH, 'salesforce', `${baseName}-v${version}.md`);
+      version++;
+    } while (fs.existsSync(versionedPath) && version < 50);
+    fs.writeFileSync(versionedPath, content, 'utf8');
+    return versionedPath;
+  }
+  
+  if (mode === 'merge' && fs.existsSync(filePath)) {
+    // Merge: keep existing frontmatter, append new sections
+    const existing = fs.readFileSync(filePath, 'utf8');
+    const merged = mergeOkfContent(existing, content, storyId);
+    fs.writeFileSync(filePath, merged, 'utf8');
+    return filePath;
+  }
+  
+  // Default: replace
   fs.writeFileSync(filePath, content, 'utf8');
   return filePath;
+}
+
+/**
+ * Merge two OKF files - appends new sections with story reference
+ */
+function mergeOkfContent(existing, newContent, storyId) {
+  const { data: existingFm, content: existingBody } = matter(existing);
+  const { data: newFm, content: newBody } = matter(newContent);
+  
+  // Update frontmatter
+  const mergedFm = {
+    ...existingFm,
+    updated: { by: 'forcemind/2.0', at: new Date().toISOString() },
+    sources: [
+      ...(existingFm.sources || []),
+      ...(newFm.sources || [])
+    ]
+  };
+  
+  // Add story reference to body if not already present
+  const storyRef = storyId ? `\n\n### Story: ${storyId}\n_Updated: ${new Date().toISOString()}_\n` : '';
+  
+  // Append new body content (skip duplicate sections)
+  const existingSections = existingBody.split(/^# /m).filter(Boolean);
+  const newSections = newBody.split(/^# /m).filter(Boolean);
+  
+  let mergedBody = existingBody;
+  for (const section of newSections) {
+    const sectionTitle = section.split('\n')[0].trim();
+    if (!existingSections.some(es => es.split('\n')[0].trim() === sectionTitle)) {
+      mergedBody += `\n\n# ${section}`;
+    }
+  }
+  
+  if (storyRef) {
+    mergedBody += storyRef;
+  }
+  
+  return matter.stringify(mergedBody, mergedFm);
 }
 
 /**

@@ -1,4 +1,4 @@
-﻿---
+---
 type: Selector Map
 title: Salesforce Lightning Selectors
 description: Complete locator library for SF Lightning UI

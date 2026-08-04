@@ -1,11 +1,12 @@
 /**
- * Unified LLM Client — OpenAI, Anthropic, GitHub Copilot
+ * Unified LLM Client — OpenAI, Anthropic, GitHub Copilot, OpenCode Zen
  *
  * Supports streaming and non-streaming chat completions.
  * Configure via .env:
- *   LLM_PROVIDER=openai|anthropic|github
+ *   LLM_PROVIDER=openai|anthropic|github|opencode-zen
  *   LLM_API_KEY=sk-... or anthropic key or github token
- *   LLM_MODEL=gpt-4o | claude-sonnet-4-20250514 | gpt-4o
+ *   OPENCODE_ZEN_API_KEY=your-zen-key (for opencode-zen)
+ *   LLM_MODEL=gpt-4o | claude-sonnet-4-20250514 | gpt-4o | big-pickle
  */
 
 import { readFileSync, readdirSync, existsSync } from 'fs';
@@ -22,9 +23,13 @@ function loadEnv() {
       if (idx === -1) continue;
       const key = trimmed.slice(0, idx).trim();
       const val = trimmed.slice(idx + 1).trim();
-      if (!process.env[key]) process.env[key] = val;
+      process.env[key] = val;
     }
   } catch {}
+}
+
+export function reloadEnv() {
+  loadEnv();
 }
 
 loadEnv();
@@ -88,6 +93,25 @@ const PROVIDERS = {
       max_tokens: opts?.maxTokens ?? 4096
     }),
     parseStream: parseOpenAIStream
+  },
+  'opencode-zen': {
+    name: 'OpenCode Zen',
+    url: 'https://opencode.ai/zen/v1/chat/completions',
+    models: ['big-pickle', 'deepseek-v4-flash-free', 'mimo-v2.5-free', 'north-mini-code-free', 'nemotron-3-ultra-free'],
+    defaultModel: 'big-pickle',
+    apiKeyEnv: 'OPENCODE_ZEN_API_KEY',
+    headers: (key) => ({
+      'Authorization': `Bearer ${key}`,
+      'Content-Type': 'application/json'
+    }),
+    body: (model, messages, opts) => ({
+      model,
+      messages,
+      stream: true,
+      temperature: opts?.temperature ?? 0.3,
+      max_tokens: opts?.maxTokens ?? 4096
+    }),
+    parseStream: parseOpenAIStream
   }
 };
 
@@ -130,11 +154,13 @@ function getProvider(name) {
 
 function getConfig() {
   const provider = getProvider();
-  const apiKey = process.env.LLM_API_KEY || process.env.GITHUB_TOKEN;
+  // Use provider-specific API key env var, fallback to LLM_API_KEY, then GITHUB_TOKEN
+  const apiKey = (provider.apiKeyEnv && process.env[provider.apiKeyEnv]) || process.env.LLM_API_KEY || process.env.GITHUB_TOKEN;
   const model = process.env.LLM_MODEL || provider.defaultModel;
 
   if (!apiKey) {
-    throw new Error(`Missing API key. Set LLM_API_KEY (or GITHUB_TOKEN for GitHub) in .env`);
+    const hint = provider.apiKeyEnv ? ` (or ${provider.apiKeyEnv} for ${provider.name})` : '';
+    throw new Error(`Missing API key. Set LLM_API_KEY${hint} in .env`);
   }
 
   return { provider, apiKey, model };
@@ -193,7 +219,7 @@ export function getProviders() {
     id: key,
     name: p.name,
     models: p.models,
-    configured: !!(process.env.LLM_API_KEY || (key === 'github' && process.env.GITHUB_TOKEN))
+    configured: !!(process.env[p.apiKeyEnv] || process.env.LLM_API_KEY || (key === 'github' && process.env.GITHUB_TOKEN))
   }));
 }
 

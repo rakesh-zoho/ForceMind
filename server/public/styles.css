@@ -85,9 +85,8 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; transiti
 .bento-card {
   border-radius: var(--r-lg); backdrop-filter: blur(12px);
   overflow: hidden; display: flex; flex-direction: column;
-  transition: all 0.3s; position: relative;
+  transition: all 0.3s; position: relative; min-height: 500px; max-height: 500px;
 }
-.bento-agent { overflow: visible; }
 .card-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; flex-shrink: 0; }
 .card-title { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 .card-icon { opacity: 0.6; }
@@ -95,12 +94,13 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; transiti
 .bottom-row { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; }
 
 /* ─── TERMINAL ────────────────────────────────────────────────── */
-.terminal { flex: 1; display: flex; flex-direction: column; font-family: var(--mono); font-size: 13px; line-height: 1.5; min-height: 350px; }
-.terminal-output { flex: 1; padding: 12px 16px; margin: 0; white-space: pre-wrap; word-break: break-all; overflow-y: auto; }
-.terminal-output::-webkit-scrollbar { width: 6px; }
-.terminal-output::-webkit-scrollbar-track { background: transparent; }
-.terminal-output::-webkit-scrollbar-thumb { border-radius: 3px; }
-.terminal-input-line { display: flex; align-items: center; padding: 8px 16px 12px; gap: 8px; }
+.terminal { flex: 1; display: flex; flex-direction: column; font-family: var(--mono); font-size: 13px; line-height: 1.5; overflow: hidden; }
+.terminal-output { flex: 1; padding: 12px 16px; margin: 0; white-space: pre-wrap; word-break: break-all; overflow-y: auto; overflow-x: hidden; }
+.terminal-output::-webkit-scrollbar { width: 8px; }
+.terminal-output::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 4px; }
+.terminal-output::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+.terminal-output::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+.terminal-input-line { display: flex; align-items: center; padding: 8px 16px 12px; gap: 8px; flex-shrink: 0; }
 .prompt { font-family: var(--mono); font-size: 14px; font-weight: 600; }
 .terminal-input { flex: 1; background: transparent; border: none; font-family: var(--mono); font-size: 13px; outline: none; }
 
@@ -122,10 +122,11 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; transiti
 .llm-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; }
 
 /* ─── CHAT ────────────────────────────────────────────────────── */
-.chat-messages { flex: 1; overflow-y: auto; padding: 14px; font-size: 13px; line-height: 1.6; display: flex; flex-direction: column; gap: 8px; }
-.chat-messages::-webkit-scrollbar { width: 5px; }
-.chat-messages::-webkit-scrollbar-track { background: transparent; }
-.chat-messages::-webkit-scrollbar-thumb { border-radius: 3px; }
+.chat-messages { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 14px; font-size: 13px; line-height: 1.6; display: flex; flex-direction: column; gap: 8px; }
+.chat-messages::-webkit-scrollbar { width: 8px; }
+.chat-messages::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 4px; }
+.chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+.chat-messages::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
 .chat-msg { display: block; white-space: pre-wrap; word-break: break-word; }
 .chat-user { font-weight: 600; }
 .chat-ai { font-weight: 600; }
@@ -493,12 +494,12 @@ body[data-theme="neon"] .field-label { color: #64748b; }
 }
 
 /* ─── OKF KNOWLEDGE BASE ──────────────────────────────────────── */
-.bento-okf { grid-column: span 2; min-height: 400px; }
-.okf-content { display: grid; grid-template-columns: 160px 1fr 1fr; gap: 12px; padding: 12px; height: calc(100% - 50px); }
+.bento-okf { grid-column: span 3; min-height: 400px; max-height: 500px; overflow: hidden; }
+.okf-content { display: grid; grid-template-columns: 160px 1fr 1fr; gap: 12px; padding: 12px; height: calc(100% - 50px); overflow: hidden; }
 .okf-filters { display: flex; flex-direction: column; gap: 4px; }
 .okf-filter { padding: 6px 10px; border: none; background: rgba(255,255,255,0.05); color: var(--text); border-radius: 6px; cursor: pointer; font-size: 12px; text-align: left; }
 .okf-filter:hover, .okf-filter.active { background: rgba(99,102,241,0.2); color: #818cf8; }
-.okf-tree { overflow-y: auto; border-right: 1px solid rgba(255,255,255,0.06); padding-right: 12px; }
+.okf-tree { overflow-y: auto; border-right: 1px solid rgba(255,255,255,0.06); padding-right: 12px; min-height: 0; }
 .okf-tree-item { padding: 6px 8px; cursor: pointer; border-radius: 4px; font-size: 12px; font-family: var(--mono); }
 .okf-tree-item:hover { background: rgba(255,255,255,0.05); }
 .okf-tree-item.type-salesforce-object { border-left: 2px solid #22c55e; }
@@ -506,7 +507,7 @@ body[data-theme="neon"] .field-label { color: #64748b; }
 .okf-tree-item.type-framework-pattern { border-left: 2px solid #f59e0b; }
 .okf-tree-item.type-agent-prompt { border-left: 2px solid #8b5cf6; }
 .okf-tree-item.type-test-plan { border-left: 2px solid #ef4444; }
-.okf-detail { overflow-y: auto; padding-left: 12px; }
+.okf-detail { overflow-y: auto; padding-left: 12px; min-height: 0; }
 .okf-detail h3 { margin: 0 0 8px; font-size: 14px; }
 .okf-detail .meta { font-size: 11px; opacity: 0.6; margin-bottom: 12px; }
 .okf-detail .status { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
