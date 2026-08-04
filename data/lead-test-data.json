@@ -1,0 +1,72 @@
+{
+  "requiredFieldsOnly": {
+    "firstName": "John",
+    "lastName": "Doe-{{timestamp}}",
+    "company": "Acme Corporation"
+  },
+  "allStandardFields": {
+    "firstName": "Jane",
+    "lastName": "Smith-{{timestamp}}",
+    "company": "Tech Innovations Inc",
+    "phone": "+1-555-123-4567",
+    "email": "jane.smith.{{timestamp}}@techinnovations.com",
+    "title": "Manager",
+    "leadSource": "Web"
+  },
+  "specialCharacters": {
+    "firstName": "François",
+    "lastName": "O'Sullivan-{{timestamp}}",
+    "company": "Société Générale & Partners"
+  },
+  "keyboardTest": {
+    "firstName": "KeyboardTest",
+    "lastName": "User-{{timestamp}}",
+    "company": "KeyboardCorp"
+  },
+  "cancelScenario": {
+    "firstName": "Rachel",
+    "lastName": "Lee",
+    "company": "Progress Corp"
+  },
+  "missingLastName": {
+    "firstName": "Michael",
+    "lastName": "",
+    "company": ""
+  },
+  "validEmail": {
+    "firstName": "Robert",
+    "lastName": "Brown-{{timestamp}}",
+    "company": "Enterprise Corp",
+    "email": "robert.brown@enterprisecorp.com"
+  },
+  "picklistOnly": {
+    "firstName": "Emily",
+    "lastName": "Davis-{{timestamp}}",
+    "company": "Growth Ventures",
+    "leadSource": "Web"
+  },
+  "convertBasic": {
+    "firstName": "Convert",
+    "lastName": "BasicLead-{{timestamp}}",
+    "company": "Convert Corp"
+  },
+  "convertAllFields": {
+    "firstName": "ConvertFull",
+    "lastName": "FullLead-{{timestamp}}",
+    "company": "FullConvert Inc",
+    "phone": "+1-555-987-6543",
+    "email": "convertfull.{{timestamp}}@convertcorp.com",
+    "title": "Director",
+    "leadSource": "Web"
+  },
+  "convertNoOpportunity": {
+    "firstName": "ConvertNoOpp",
+    "lastName": "NoOppLead-{{timestamp}}",
+    "company": "NoOpp Corp"
+  },
+  "convertSpecialChars": {
+    "firstName": "Convert",
+    "lastName": "O'Brien-{{timestamp}}",
+    "company": "Société & Partners"
+  }
+}

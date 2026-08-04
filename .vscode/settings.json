@@ -1,0 +1,11 @@
+{
+  "github.copilot.chat.agent.enabled": true,
+  "github.copilot.chat.experimental.agents": true,
+  "chat.tools.autoApprove": false,
+  "playwright.reuseBrowser": true,
+  "playwright.showTrace": false,
+  "editor.formatOnSave": true,
+  "files.associations": {
+    "*.agent.md": "markdown"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "minimalRequired": {
+    "firstName": "John",
+    "lastName": "Doe-{{timestamp}}",
+    "description": "Minimal Contact - required fields only"
+  },
+  "allStandardFields": {
+    "firstName": "Jane",
+    "lastName": "Smith-{{timestamp}}",
+    "phone": "+1-555-123-4567",
+    "email": "jane.smith.{{timestamp}}@techinnovations.com",
+    "title": "Manager",
+    "department": "Engineering",
+    "birthdate": "{{datePlus30}}",
+    "description": "Full standard fields Contact"
+  },
+  "linkedToAccount": {
+    "firstName": "Acme",
+    "lastName": "Contact-{{timestamp}}",
+    "phone": "+1-555-200-3000",
+    "email": "acme.contact.{{timestamp}}@acmecorp.com",
+    "accountName": "Test",
+    "description": "Contact linked to Account"
+  },
+  "updateFields": {
+    "firstName": "Update",
+    "lastName": "Target-{{timestamp}}",
+    "phone": "+1-555-999-0000",
+    "email": "update.target.{{timestamp}}@updatetest.com",
+    "description": "Contact for update testing"
+  },
+  "batchCreate": [
+    {
+      "firstName": "Batch1",
+      "lastName": "Contact-{{timestamp}}",
+      "email": "batch1.{{timestamp}}@batchtest.com"
+    },
+    {
+      "firstName": "Batch2",
+      "lastName": "Contact-{{timestamp}}",
+      "email": "batch2.{{timestamp}}@batchtest.com"
+    },
+    {
+      "firstName": "Batch3",
+      "lastName": "Contact-{{timestamp}}",
+      "email": "batch3.{{timestamp}}@batchtest.com"
+    }
+  ],
+  "specialCharacters": {
+    "firstName": "François",
+    "lastName": "O'Sullivan-{{timestamp}}",
+    "email": "francois.{{timestamp}}@special.com",
+    "description": "Contact with special characters: & < > '"
+  },
+  "soslSearch": {
+    "firstName": "Searchable",
+    "lastName": "Contact-{{timestamp}}",
+    "email": "searchable.{{timestamp}}@searchtest.com",
+    "searchTerm": "Searchable"
+  },
+  "negativeMissingLastName": {
+    "firstName": "NoLastName",
+    "lastName": "",
+    "description": "Contact with missing last name - should fail"
+  }
+}

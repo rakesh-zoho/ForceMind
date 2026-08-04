@@ -1,0 +1,45 @@
+{
+  "name": "forcemind",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AI-driven Salesforce automation with Playwright POM + MCP + Agentic Agents",
+  "scripts": {
+    "test": "npx playwright test --config=config/playwright.config.js",
+    "test:headed": "npx playwright test --config=config/playwright.config.js --headed",
+    "test:debug": "npx playwright test --config=config/playwright.config.js --debug",
+    "test:ui": "npx playwright test --config=config/playwright.config.js --ui",
+    "test:ci": "cross-env CI=true npx playwright test --config=config/playwright.config.js --retries=2",
+    "test:lead": "npx playwright test --config=config/playwright.config.js tests/lead-creation.spec.js",
+    "test:opportunity": "npx playwright test --config=config/playwright.config.js tests/opportunity-creation.spec.js",
+    "test:account": "npx playwright test --config=config/playwright.config.js tests/account-creation.spec.js",
+    "test:contact": "npx playwright test --config=config/playwright.config.js tests/contact-creation.spec.js",
+    "test:case": "npx playwright test --config=config/playwright.config.js tests/case-creation.spec.js",
+    "test:conversion": "npx playwright test --config=config/playwright.config.js tests/lead-conversion.spec.js",
+    "test:contact-mcp": "npx playwright test --config=config/playwright.config.js tests/contact-mcp-crud.spec.js",
+    "test:contact-mcp:keep": "cross-env CLEANUP=false npx playwright test --config=config/playwright.config.js tests/contact-mcp-crud.spec.js",
+    "test:heal": "node scripts/self-heal.js",
+    "test:heal:lead": "node scripts/self-heal.js tests/lead-creation.spec.js",
+    "test:all": "node scripts/self-heal.js tests/*.spec.js",
+    "report:allure": "npx allure serve reports/allure-results",
+    "report:pw": "npx playwright show-report reports/playwright-report",
+    "dashboard": "node server/index.js",
+    "agents:init": "npx playwright init-agents --loop=opencode",
+    "setup": "node scripts/setup.js",
+    "okf:read": "node okf-utils/okf-reader.js",
+    "okf:validate": "node okf-utils/okf-validator.js",
+    "okf:enrich": "node okf-utils/okf-enricher.js"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.62.0",
+    "allure-playwright": "^3.6.0",
+    "ansi_up": "^6.0.6",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.0",
+    "express": "^5.2.1",
+    "gray-matter": "^4.0.3",
+    "ws": "^8.21.1"
+  },
+  "devDependencies": {
+    "allure-commandline": "^2.30.0"
+  }
+}

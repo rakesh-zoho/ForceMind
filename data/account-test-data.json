@@ -1,0 +1,57 @@
+{
+  "requiredFieldsOnly": {
+    "accountName": "Test Account-{{timestamp}}"
+  },
+  "allStandardFields": {
+    "accountName": "Full Account-{{timestamp}}",
+    "phone": "+1-555-0199",
+    "website": "https://fullaccount-{{timestamp}}.com",
+    "industry": "Technology",
+    "type": "Customer",
+    "billingStreet": "123 Main Street",
+    "billingCity": "San Francisco",
+    "billingState": "CA",
+    "billingPostalCode": "94105",
+    "billingCountry": "US",
+    "employees": "250",
+    "annualRevenue": "5000000",
+    "description": "Full Account created with all standard fields for comprehensive testing"
+  },
+  "phoneAndWebsite": {
+    "accountName": "Phone Web Account-{{timestamp}}",
+    "phone": "+1-555-0200",
+    "website": "https://phoneweb-{{timestamp}}.com"
+  },
+  "billingAddress": {
+    "accountName": "Billing Account-{{timestamp}}",
+    "billingStreet": "456 Oak Avenue\nSuite 200",
+    "billingCity": "New York",
+    "billingState": "NY",
+    "billingPostalCode": "10001",
+    "billingCountry": "US"
+  },
+  "industryAndType": {
+    "accountName": "Industry Account-{{timestamp}}",
+    "industry": "Finance",
+    "type": "Partner"
+  },
+  "specialCharacters": {
+    "accountName": "O'Brien & Sons — \"Special\" Chars {{timestamp}}"
+  },
+  "longFieldValues": {
+    "accountName": "AAAAAAAAAABBBBBBBBBBCCCCCCCCCCDDDDDDDDDDEEEEEEEEEEFFFFFFFFFFGGGGGGGGGGHHHHHHHHHHIIIIIIIIIJJJJJJJJJJKKKKKKKKKKLLLLLLLLLLMMMMMMMMMMNNNNNNNNNNOOOOOOOOOOPPPPPPPPPPQQQQQQQQQQRRRRRRRRRRSSSSSSSSSSTTTTTTTTTTUUUUUUUUUUVVVVVVVVVVWWWWWWWWWWXXXXXXXXXXYYYYYYYYYYZZZZZZZZZZ-{{timestamp}}",
+    "description": "This is a very long description field used for boundary testing. It contains multiple sentences to simulate a realistic long text input. The purpose is to verify that the Account description field can handle maximum length values without truncation or errors during save operations. This description exceeds normal usage but stays within the Salesforce field limit of 3000 characters for the Description field on the Account object."
+  },
+  "numericBoundary": {
+    "accountName": "Numeric Account-{{timestamp}}",
+    "employees": "99999999",
+    "annualRevenue": "999999999"
+  },
+  "negativeEmptyName": {
+    "accountName": ""
+  },
+  "negativeInvalidWebsite": {
+    "accountName": "Invalid URL Account-{{timestamp}}",
+    "website": "not-a-valid-url"
+  }
+}

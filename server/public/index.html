@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SF Agentic Test Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/ansi_up@6.0.6/dist/ansi_up.js"></script>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <div class="logo-icon">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <rect width="28" height="28" rx="8" fill="url(#logoGrad)"/>
+              <path d="M8 14L12 18L20 10" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs><linearGradient id="logoGrad" x1="0" y1="0" x2="28" y2="28"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+            </svg>
+          </div>
+          <div class="logo-text">
+            <h1>SF Agentic</h1>
+            <span class="logo-sub">Test Automation Dashboard</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-right">
+        <button id="themeToggle" class="btn-icon" title="Toggle Theme">
+          <svg id="themeIconBento" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2A.5.5 0 018 1zm3.707 1.293a.5.5 0 010 .707l-1.414 1.414a.5.5 0 11-.707-.707l1.414-1.414a.5.5 0 01.707 0zM14 8a.5.5 0 01-.5.5h-2a.5.5 0 010-1h2a.5.5 0 01.5.5zM4.293 13.707a.5.5 0 01-.707 0l-1.414-1.414a.5.5 0 11.707-.707l1.414 1.414a.5.5 0 010 .707zM2 8a.5.5 0 01-.5.5h-2a.5.5 0 010-1h2A.5.5 0 012 8zm.707-3.707a.5.5 0 010-.707l1.414-1.414a.5.5 0 11.707.707L4.414 4.293a.5.5 0 01-.707 0zM8 13a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2A.5.5 0 018 13zm4.293-.293a.5.5 0 010-.707l1.414-1.414a.5.5 0 11.707.707l-1.414 1.414a.5.5 0 01-.707 0z"/></svg>
+          <svg id="themeIconNeon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="display:none"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+        <div class="status-badge" id="statusBadge">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="statusText">Ready</span>
+        </div>
+        <button id="envBtn" class="btn-icon" title="Environment Variables">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.421 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.421-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.116l.094-.318z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- KPI Cards -->
+    <section class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-icon passed"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+        <div class="kpi-data">
+          <span class="kpi-value passed" id="passed">0</span>
+          <span class="kpi-label">Passed</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon failed"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/></svg></div>
+        <div class="kpi-data">
+          <span class="kpi-value failed" id="failed">0</span>
+          <span class="kpi-label">Failed</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon skipped"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z"/></svg></div>
+        <div class="kpi-data">
+          <span class="kpi-value skipped" id="skipped">0</span>
+          <span class="kpi-label">Skipped</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon duration"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/></svg></div>
+        <div class="kpi-data">
+          <span class="kpi-value" id="duration">-</span>
+          <span class="kpi-label">Duration</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bento Grid -->
+    <section class="bento">
+      <!-- Test Runner (large card) -->
+      <div class="bento-card bento-runner">
+        <div class="card-header">
+          <div class="card-title">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" class="card-icon"><path d="M6.428 1.151C7.705.728 9.213.755 10.44.958c1.253.207 2.193.982 2.746 2.067.555 1.093.598 2.422.126 3.863-.456 1.396-1.504 2.575-3.042 3.148a7.015 7.015 0 01-3.735.21c-1.554-.38-2.612-1.576-3.077-2.992-.478-1.458-.432-2.804.117-3.918C4.13 2.514 5.078 1.83 6.428 1.151zm1.414 1.187a.5.5 0 00-.858.43c-.264.595-.407 1.278-.407 2.065 0 1.324.33 2.393.865 3.049.53.648 1.272.91 2.192.83a.5.5 0 00.078-.994c-.786-.065-1.366-.322-1.791-.804-.428-.485-.673-1.187-.673-2.08 0-.677.122-1.32.37-1.887a.5.5 0 00.234-.449z"/></svg>
+            <span>Test Runner</span>
+          </div>
+          <div class="card-actions">
+            <select id="suiteSelect" class="suite-select"><option value="">Select suite...</option></select>
+            <button id="runBtn" class="btn-primary" disabled>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M4 2l8 5-8 5V2z"/></svg>
+              Run
+            </button>
+            <button id="stopBtn" class="btn-danger" disabled>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="3" y="3" width="8" height="8" rx="1"/></svg>
+              Stop
+            </button>
+          </div>
+        </div>
+        <div class="terminal" id="terminal">
+          <pre class="terminal-output" id="output"></pre>
+          <div class="terminal-input-line">
+            <span class="prompt">❯</span>
+            <input type="text" id="cmdInput" class="terminal-input" autocomplete="off" spellcheck="false">
+          </div>
+        </div>
+      </div>
+
+      <!-- JIRA Agent -->
+      <div class="bento-card bento-jira">
+        <div class="card-header">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="card-icon jira-icon"><path d="M3 3h18v18H3z"/><path d="M8 8l4 4-4 4"/><line x1="14" y1="16" x2="18" y2="16"/></svg>
+            <span>JIRA Agent</span>
+          </div>
+          <div class="card-actions">
+            <button id="generateOkfBtn" class="btn-okf" title="Generate OKF from JIRA story">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              Generate OKF
+            </button>
+            <button id="chatHelpBtn" class="btn-ghost" title="Help">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </button>
+            <button id="chatClearBtn" class="btn-ghost" title="Clear chat">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="chat-messages" id="jiraChatMessages">
+          <div class="chat-welcome">
+            <div class="welcome-icon">📋</div>
+            <div class="welcome-title">JIRA Task Generator</div>
+            <div class="welcome-desc">Fetch stories and generate task files</div>
+            <div class="welcome-cmds">
+              <code>fetch</code> List stories &nbsp; <code>generate SF-101</code> Create task &nbsp; <code>okf SF-101 Thoren</code> Create OKF
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <input type="text" id="jiraChatInput" class="chat-input" placeholder="Type a command..." autocomplete="off" spellcheck="false">
+          <button id="jiraChatSendBtn" class="btn-send">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M15.854.146a.5.5 0 01.11.54l-5.819 14.547a.75.75 0 01-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 01.124-1.33L15.314.037a.5.5 0 01.54.11z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- LLM Agent -->
+      <div class="bento-card bento-agent">
+        <div class="card-header">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="card-icon agent-icon"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M12 2a4 4 0 00-4 4v2h8V6a4 4 0 00-4-4z"/><circle cx="9" cy="14" r="1" fill="currentColor"/><circle cx="15" cy="14" r="1" fill="currentColor"/><path d="M9 18h6"/></svg>
+            <span>AI Agent</span>
+            <select id="agentSelect" class="agent-select">
+              <option value="custom">Custom</option>
+            </select>
+            <span class="llm-badge" id="llmBadge">-</span>
+          </div>
+          <div class="card-actions">
+            <button id="agentChatClearBtn" class="btn-ghost" title="Clear chat">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="chat-messages" id="agentChatMessages">
+          <div class="chat-welcome">
+            <div class="welcome-icon">🤖</div>
+            <div class="welcome-title">AI Agent Chat</div>
+            <div class="welcome-desc">Select an agent, use @ to reference files</div>
+            <div class="welcome-cmds">
+              <code>@tasks/file.md</code> Reference &nbsp; <code>@models/Page.js</code> Include POM
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <div class="chat-mentions" id="chatMentions" style="display:none"></div>
+          <input type="text" id="chatInput" class="chat-input" placeholder="Type a message... (@ to reference)" autocomplete="off" spellcheck="false">
+          <button id="chatSendBtn" class="btn-send">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M15.854.146a.5.5 0 01.11.54l-5.819 14.547a.75.75 0 01-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 01.124-1.33L15.314.037a.5.5 0 01.54.11z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- OKF Knowledge Base -->
+      <div class="bento-card bento-okf" style="grid-column: span 3;">
+        <div class="card-header">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <span>Knowledge Base</span>
+            <span class="okf-count" id="okfCount">0 concepts</span>
+          </div>
+          <div class="card-actions">
+            <button id="refreshSelectorsBtn" class="btn-okf" title="Refresh selectors from test files">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0118.8-4.3M22 12.5a10 10 0 01-18.8 4.2"/></svg>
+              Refresh Selectors
+            </button>
+          </div>
+        </div>
+        <div class="okf-content">
+          <div class="okf-filters">
+            <button class="okf-filter active" data-type="all">All</button>
+            <button class="okf-filter" data-type="Salesforce Object">Objects</button>
+            <button class="okf-filter" data-type="Selector Map">Selectors</button>
+            <button class="okf-filter" data-type="Framework Pattern">Patterns</button>
+            <button class="okf-filter" data-type="Agent Prompt">Agents</button>
+            <button class="okf-filter" data-type="Test Plan">Tests</button>
+          </div>
+          <div class="okf-tree" id="okfTree"></div>
+          <div class="okf-detail" id="okfDetail">
+            <div class="okf-detail-placeholder">Select a concept to view</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Row -->
+    <section class="bottom-row">
+      <div class="bento-card bento-reports">
+        <div class="card-header">
+          <div class="card-title">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" class="card-icon"><path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 000 2.5v11a.5.5 0 00.707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 00.78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0016 13.5v-11a.5.5 0 00-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/></svg>
+            <span>Reports</span>
+          </div>
+        </div>
+        <div class="reports-body">
+          <button id="genReportBtn" class="btn-report">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M11.5 1.5v11h-9v-11h9zm-1 1h-7v9h7v-9z"/></svg>
+            Generate
+          </button>
+          <button id="openAllureBtn" class="btn-report" style="display:none">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M9 1H3a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2V5L9 1z"/></svg>
+            Allure
+          </button>
+          <button id="openPwBtn" class="btn-report" style="display:none">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M9 1H3a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2V5L9 1z"/></svg>
+            Playwright
+          </button>
+        </div>
+      </div>
+
+      <div class="bento-card bento-quick">
+        <div class="card-header">
+          <div class="card-title">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" class="card-icon"><path d="M8.982 1.566a1.13 1.13 0 00-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 01-1.1 0L7.1 5.995A.905.905 0 018 5zm.002 6.5a.75.75 0 100 1.5.75.75 0 000-1.5z"/></svg>
+            <span>Quick Actions</span>
+          </div>
+        </div>
+        <div class="quick-body">
+          <button class="btn-quick" onclick="connectAndSend({type:'exec',cmd:'npm run test:lead'})">Lead Tests</button>
+          <button class="btn-quick" onclick="connectAndSend({type:'exec',cmd:'npm run test:account'})">Account Tests</button>
+          <button class="btn-quick" onclick="connectAndSend({type:'exec',cmd:'npm run test:case'})">Case Tests</button>
+          <button class="btn-quick" onclick="connectAndSend({type:'exec',cmd:'npm run test:opportunity'})">Opp Tests</button>
+          <button class="btn-quick" onclick="connectAndSend({type:'exec',cmd:'npm run test:all'})">All Tests</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- .env Modal -->
+  <div class="modal" id="envModal">
+    <div class="modal-content glass">
+      <div class="modal-header">
+        <span>Environment Variables</span>
+        <button id="envClose" class="btn-ghost">✕</button>
+      </div>
+      <textarea id="envEditor" class="env-editor" spellcheck="false"></textarea>
+      <div class="modal-footer">
+        <button id="envSave" class="btn-primary">Save</button>
+        <button id="envCancel" class="btn-ghost">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ─── Theme Switcher ──────────────────────────────────────────
+    (function() {
+      const saved = localStorage.getItem('sf-dash-theme') || 'bento';
+      document.body.setAttribute('data-theme', saved);
+      function updateIcons(theme) {
+        const bento = document.getElementById('themeIconBento');
+        const neon = document.getElementById('themeIconNeon');
+        if (bento && neon) {
+          bento.style.display = theme === 'bento' ? 'block' : 'none';
+          neon.style.display = theme === 'neon' ? 'block' : 'none';
+        }
+      }
+      updateIcons(saved);
+      document.getElementById('themeToggle').addEventListener('click', function() {
+        const current = document.body.getAttribute('data-theme');
+        const next = current === 'bento' ? 'neon' : 'bento';
+        document.body.setAttribute('data-theme', next);
+        localStorage.setItem('sf-dash-theme', next);
+        updateIcons(next);
+      });
+    })();
+
+    const $ = id => document.getElementById(id);
+    const output = $('output');
+    const cmdInput = $('cmdInput');
+    const terminal = $('terminal');
+    const suiteSelect = $('suiteSelect');
+    const runBtn = $('runBtn');
+    const stopBtn = $('stopBtn');
+    const statusDot = $('statusDot');
+    const statusText = $('statusText');
+    const statusBadge = $('statusBadge');
+    const openAllureBtn = $('openAllureBtn');
+    const openPwBtn = $('openPwBtn');
+    const genReportBtn = $('genReportBtn');
+
+    let ws = null;
+    let history = [];
+    let historyIdx = -1;
+
+    function ansiToHtml(text) {
+      if (typeof ansi_up !== 'undefined') {
+        try { return ansi_up.ansi_to_html(text); } catch(e) {}
+      }
+      return text
+        .replace(/\x1b\[32m(.*?)\x1b\[0m/g, '<span style="color:#34d399">$1</span>')
+        .replace(/\x1b\[31m(.*?)\x1b\[0m/g, '<span style="color:#f87171">$1</span>')
+        .replace(/\x1b\[33m(.*?)\x1b\[0m/g, '<span style="color:#fbbf24">$1</span>')
+        .replace(/\x1b\[36m(.*?)\x1b\[0m/g, '<span style="color:#22d3ee">$1</span>')
+        .replace(/\x1b\[35m(.*?)\x1b\[0m/g, '<span style="color:#c084fc">$1</span>')
+        .replace(/\x1b\[1m(.*?)\x1b\[0m/g, '<span style="font-weight:600">$1</span>')
+        .replace(/\x1b\[[0-9;]*m/g, '');
+    }
+
+    fetch('/api/suites').then(r => r.json()).then(suites => {
+      suiteSelect.innerHTML = '<option value="">Select suite...</option>';
+      suites.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = s.label;
+        suiteSelect.appendChild(opt);
+      });
+      runBtn.disabled = false;
+    });
+
+    checkReports();
+    function checkReports() {
+      fetch('/api/reports').then(r => r.json()).then(data => {
+        openAllureBtn.style.display = data.allure ? 'inline-flex' : 'none';
+        openPwBtn.style.display = data.playwright ? 'inline-flex' : 'none';
+      });
+    }
+
+    function generateReports() {
+      appendAnsi('\x1b[33mGenerating reports...\x1b[0m\r\n');
+      genReportBtn.disabled = true;
+      fetch('/api/reports/generate', { method: 'POST' }).then(r => r.json()).then(data => {
+        genReportBtn.disabled = false;
+        appendAnsi(data.success ? '\x1b[32mReports generated!\x1b[0m\r\n' : '\x1b[31mError: ' + (data.errors||[]).join('; ') + '\x1b[0m\r\n');
+        checkReports();
+      }).catch(e => { genReportBtn.disabled = false; appendAnsi('\x1b[31m' + e.message + '\x1b[0m\r\n'); });
+    }
+
+    runBtn.addEventListener('click', () => { if (suiteSelect.value) connectAndSend({ type: 'run', suite: suiteSelect.value }); });
+    stopBtn.addEventListener('click', () => { if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'stop' })); });
+
+    cmdInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const cmd = cmdInput.value.trim();
+        if (!cmd) return;
+        history.push(cmd); historyIdx = history.length; cmdInput.value = '';
+        if (cmd === 'clear') { output.textContent = ''; return; }
+        connectAndSend({ type: 'exec', cmd });
+      }
+      if (e.key === 'ArrowUp') { e.preventDefault(); if (historyIdx > 0) { historyIdx--; cmdInput.value = history[historyIdx]; } }
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (historyIdx < history.length - 1) { historyIdx++; cmdInput.value = history[historyIdx]; } else { historyIdx = history.length; cmdInput.value = ''; } }
+    });
+
+    $('clearBtn')?.addEventListener('click', () => { output.textContent = ''; });
+    genReportBtn.addEventListener('click', generateReports);
+    openAllureBtn.addEventListener('click', () => window.open('/reports/allure-report/index.html', '_blank'));
+    openPwBtn.addEventListener('click', () => window.open('/reports/playwright-report/index.html', '_blank'));
+
+    $('envBtn').addEventListener('click', () => {
+      fetch('/api/env').then(r => r.json()).then(data => { $('envEditor').value = data.content || ''; $('envModal').classList.add('show'); });
+    });
+    $('envClose').addEventListener('click', () => $('envModal').classList.remove('show'));
+    $('envCancel').addEventListener('click', () => $('envModal').classList.remove('show'));
+    $('envSave').addEventListener('click', () => {
+      fetch('/api/env', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: $('envEditor').value }) })
+        .then(r => r.json()).then(data => { if (data.success) { appendAnsi('\x1b[32m.env saved!\x1b[0m\r\n'); $('envModal').classList.remove('show'); } });
+    });
+
+    function connectAndSend(msg) {
+      if (ws && ws.readyState === 1) { ws.send(JSON.stringify(msg)); return; }
+      const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(proto + '//' + location.host);
+      ws.onopen = () => { setStatus('running', 'Running'); runBtn.disabled = true; stopBtn.disabled = false; cmdInput.disabled = true; ws.send(JSON.stringify(msg)); };
+      ws.onmessage = (e) => handleMessage(JSON.parse(e.data));
+      ws.onclose = () => { setStatus('idle', 'Ready'); stopBtn.disabled = true; runBtn.disabled = false; cmdInput.disabled = false; cmdInput.focus(); checkReports(); };
+    }
+
+    function handleMessage(msg) {
+      if (msg.type === 'stdout' || msg.type === 'stderr' || msg.type === 'system') { appendAnsi(msg.data); if (msg.type === 'stdout') parseStats(msg.data); }
+      if (msg.type === 'done') { setStatus('idle', 'Ready'); stopBtn.disabled = true; runBtn.disabled = false; cmdInput.disabled = false; cmdInput.focus(); appendAnsi('\r\n\x1b[33mAuto-generating reports...\x1b[0m\r\n'); fetch('/api/reports/auto-generate', { method: 'POST' }).then(r => r.json()).then(() => { appendAnsi('\x1b[32mReports ready!\x1b[0m\r\n'); checkReports(); }).catch(() => checkReports()); }
+      if (msg.type === 'error') appendAnsi('\x1b[31m' + msg.data + '\x1b[0m');
+    }
+
+    function parseStats(text) {
+      const p = text.match(/(\d+) passed/); const f = text.match(/(\d+) failed/); const s = text.match(/(\d+) skipped/);
+      const d = text.match(/\((\d+\.?\d*)\s*s\)/) || text.match(/\((\d+)m\s*(\d+\.?\d*)s\)/) || text.match(/in\s+(\d+\.?\d*)\s*s/) || text.match(/in\s+(\d+)m\s*(\d+\.?\d*)s/);
+      if (p) $('passed').textContent = p[1]; if (f) $('failed').textContent = f[1]; if (s) $('skipped').textContent = s[1];
+      if (d) { $('duration').textContent = d[2] ? d[1] + 'm ' + d[2] + 's' : d[1] + 's'; }
+    }
+
+    function appendAnsi(text) { const span = document.createElement('span'); span.innerHTML = ansiToHtml(text); output.appendChild(span); terminal.scrollTop = terminal.scrollHeight; }
+    function setStatus(state, text) { statusDot.className = 'status-dot ' + state; statusText.textContent = text; statusBadge.className = 'status-badge ' + state; }
+    terminal.addEventListener('click', () => cmdInput.focus());
+    cmdInput.focus();
+
+    // ─── JIRA Chat ────────────────────────────────────────────────
+    const jiraChatMessages = $('jiraChatMessages');
+    const jiraChatInput = $('jiraChatInput');
+
+    function appendJiraChat(text, cls) {
+      const span = document.createElement('span');
+      span.className = 'chat-msg' + (cls ? ' ' + cls : '');
+      span.innerHTML = ansiToHtml(text);
+      jiraChatMessages.appendChild(span);
+      jiraChatMessages.scrollTop = jiraChatMessages.scrollHeight;
+    }
+
+    function sendJiraChat(message) {
+      if (!message.trim()) return;
+      const w = jiraChatMessages.querySelector('.chat-welcome'); if (w) w.remove();
+      appendJiraChat('<span class="chat-user">You:</span> ' + message.replace(/</g, '&lt;'));
+      connectAndSend({ type: 'chat', message }); jiraChatInput.value = '';
+    }
+
+    $('jiraChatSendBtn').addEventListener('click', () => sendJiraChat(jiraChatInput.value));
+    jiraChatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendJiraChat(jiraChatInput.value); });
+    $('chatHelpBtn').addEventListener('click', () => sendJiraChat('help'));
+    $('chatClearBtn').addEventListener('click', () => { jiraChatMessages.innerHTML = ''; });
+
+    // ─── LLM Agent Chat ──────────────────────────────────────────
+    const agentChatMessages = $('agentChatMessages');
+    const chatInput = $('chatInput');
+    const agentSelect = $('agentSelect');
+    const llmBadge = $('llmBadge');
+    const mentionsPopup = $('chatMentions');
+    let projectFiles = [], selectedAgent = 'custom', isStreaming = false, currentStreamEl = null;
+
+    fetch('/api/agents').then(r => r.json()).then(data => {
+      agentSelect.innerHTML = '';
+      data.agents.forEach(a => { const o = document.createElement('option'); o.value = a.id; o.textContent = a.name; agentSelect.appendChild(o); });
+      if (data.llm.configured) { llmBadge.textContent = data.llm.provider; llmBadge.className = 'llm-badge ok'; } else { llmBadge.textContent = 'No LLM'; llmBadge.className = 'llm-badge'; }
+    });
+    fetch('/api/files').then(r => r.json()).then(data => { projectFiles = data.files || []; });
+    agentSelect.addEventListener('change', () => { selectedAgent = agentSelect.value; });
+
+    function appendAgentChat(text, cls) { const s = document.createElement('span'); s.className = 'chat-msg'+(cls?' '+cls:''); s.innerHTML = ansiToHtml(text); agentChatMessages.appendChild(s); agentChatMessages.scrollTop = agentChatMessages.scrollHeight; }
+    function appendAgentRaw(html, cls) { const d = document.createElement('div'); d.className = 'chat-msg'+(cls?' '+cls:''); d.innerHTML = html; agentChatMessages.appendChild(d); agentChatMessages.scrollTop = agentChatMessages.scrollHeight; return d; }
+
+    function showMentions(filter) {
+      const q = filter.toLowerCase();
+      const m = projectFiles.filter(f => f.path.toLowerCase().includes(q) || f.name.toLowerCase().includes(q)).slice(0, 8);
+      if (!m.length) { mentionsPopup.style.display = 'none'; return; }
+      mentionsPopup.innerHTML = '';
+      m.forEach(f => { const i = document.createElement('div'); i.className = 'mention-item'; i.innerHTML = '<span class="mention-dir">'+f.dir+'/</span><span class="mention-name">'+f.name+'</span>'; i.dataset.path = f.path; i.onclick = () => insertMention(f.path); mentionsPopup.appendChild(i); });
+      mentionsPopup.style.display = 'block';
+    }
+
+    function insertMention(p) { const v = chatInput.value; const i = v.lastIndexOf('@'); chatInput.value = (i>=0 ? v.slice(0,i) : v) + '@'+p+' '; mentionsPopup.style.display = 'none'; chatInput.focus(); }
+
+    chatInput.addEventListener('input', () => { const v = chatInput.value; const i = v.lastIndexOf('@'); if (i>=0 && i===v.length-1) showMentions(''); else if (i>=0 && !v.slice(i).includes(' ')) showMentions(v.slice(i+1)); else mentionsPopup.style.display = 'none'; });
+
+    chatInput.addEventListener('keydown', (e) => {
+      if (mentionsPopup.style.display === 'block') {
+        const items = mentionsPopup.querySelectorAll('.mention-item');
+        if (e.key==='ArrowDown'||e.key==='ArrowUp') { e.preventDefault(); const a=mentionsPopup.querySelector('.mention-item.active'); let idx=Array.from(items).indexOf(a); idx=e.key==='ArrowDown'?Math.min(idx+1,items.length-1):Math.max(idx-1,0); items.forEach(i=>i.classList.remove('active')); if(items[idx])items[idx].classList.add('active'); }
+        if (e.key==='Enter'||e.key==='Tab') { const a=mentionsPopup.querySelector('.mention-item.active')||items[0]; if(a){e.preventDefault();insertMention(a.dataset.path);} }
+        if (e.key==='Escape') mentionsPopup.style.display='none';
+      }
+    });
+
+    function sendAgentChat(msg) {
+      if (!msg.trim()||isStreaming) return;
+      const w=agentChatMessages.querySelector('.chat-welcome'); if(w)w.remove();
+      const at=[]; const rx=/@([\w\/\-_.]+)/g; let m; while((m=rx.exec(msg))!==null)at.push(m[1]);
+      const disp=msg.replace(/@[\w\/\-_.]+/g, m=>'<span class="chat-mention">'+m+'</span>');
+      appendAgentRaw('<span class="chat-user">You:</span> '+disp.replace(/</g,'&lt;').replace(/&lt;span/g,'<span').replace(/<\/span>/g,'</span>'));
+      if(selectedAgent&&(selectedAgent!=='custom'||at.length>0)) connectAndSend({type:'llm-chat',agent:selectedAgent,message:msg,files:at});
+      else connectAndSend({type:'chat',message:msg});
+      chatInput.value=''; mentionsPopup.style.display='none';
+    }
+
+    $('chatSendBtn').addEventListener('click', () => sendAgentChat(chatInput.value));
+    chatInput.addEventListener('keydown', (e) => { if(e.key==='Enter'&&mentionsPopup.style.display!=='block') sendAgentChat(chatInput.value); });
+    $('agentChatClearBtn').addEventListener('click', () => { agentChatMessages.innerHTML=''; });
+
+    const origHandleMessage = handleMessage;
+    handleMessage = function(msg) {
+      if(msg.type==='chat'){appendJiraChat('<span class="chat-ai">Agent:</span> '+msg.data.replace(/\r\n/g,'\n').replace(/\n/g,'<br>'));return;}
+      if(msg.type==='llm-start'){isStreaming=true;currentStreamEl=appendAgentRaw('<span class="chat-ai">Agent:</span> <span class="streaming"></span>');return;}
+      if(msg.type==='llm-delta'&&currentStreamEl){const c=currentStreamEl.querySelector('.streaming');if(c){c.textContent+=msg.data;agentChatMessages.scrollTop=agentChatMessages.scrollHeight;}return;}
+      if(msg.type==='llm-done'){isStreaming=false;if(currentStreamEl){const c=currentStreamEl.querySelector('.streaming');if(c){c.outerHTML='<div class="chat-response">'+renderMarkdown(msg.data)+'</div>';const r=agentChatMessages.querySelector('.chat-response:last-child');if(r&&r.querySelector('pre')){const b=document.createElement('button');b.className='btn-save';b.textContent='Save to File';b.onclick=()=>showSaveDialog(msg.data);r.appendChild(b);}}currentStreamEl=null;}agentChatMessages.scrollTop=agentChatMessages.scrollHeight;return;}
+      if(msg.type==='llm-error'){isStreaming=false;currentStreamEl=null;appendAgentChat('<span class="chat-error">Error: '+msg.data+'</span>');return;}
+      if(msg.type==='llm-info'){appendAgentChat('<span class="chat-info">'+msg.data+'</span>');return;}
+      origHandleMessage(msg);
+    };
+
+    function renderMarkdown(t) {
+      let h=t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      h=h.replace(/```(\w*)\n([\s\S]*?)```/g,(_,l,c)=>'<pre><code>'+c.trim()+'</code></pre>');
+      h=h.replace(/`([^`]+)`/g,'<code>$1</code>');
+      h=h.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+      h=h.replace(/^### (.+)$/gm,'<h4>$1</h4>');
+      h=h.replace(/^## (.+)$/gm,'<h3>$1</h3>');
+      h=h.replace(/^# (.+)$/gm,'<h2>$1</h2>');
+      h=h.replace(/^- (.+)$/gm,'<li>$1</li>');
+      h=h.replace(/\n/g,'<br>');
+      return h;
+    }
+
+    // ─── OKF Knowledge Base ──────────────────────────────────────
+    let okfData = { nodes: [], edges: [] };
+    let okfFilter = 'all';
+
+    async function loadOkf() {
+      try {
+        const res = await fetch('/api/okf/bundle');
+        okfData = await res.json();
+        document.getElementById('okfCount').textContent = okfData.nodes.length + ' concepts';
+        renderOkfTree();
+      } catch (e) {
+        console.error('Failed to load OKF:', e);
+      }
+    }
+
+    function renderOkfTree() {
+      const tree = document.getElementById('okfTree');
+      tree.innerHTML = '';
+      const filtered = okfFilter === 'all' 
+        ? okfData.nodes 
+        : okfData.nodes.filter(n => n.type === okfFilter);
+      
+      filtered.forEach(node => {
+        const item = document.createElement('div');
+        item.className = 'okf-tree-item type-' + (node.type || '').toLowerCase().replace(/\s+/g, '-');
+        item.textContent = node.title || node.id;
+        item.onclick = () => loadOkfConcept(node.id);
+        tree.appendChild(item);
+      });
+    }
+
+    async function loadOkfConcept(path) {
+      const detail = document.getElementById('okfDetail');
+      detail.innerHTML = '<div class="okf-detail-placeholder">Loading...</div>';
+      try {
+        const res = await fetch('/api/okf/concept/' + path);
+        const concept = await res.json();
+        if (concept.error) {
+          detail.innerHTML = '<div class="okf-detail-placeholder">Error: ' + concept.error + '</div>';
+          return;
+        }
+        const fm = concept.frontmatter || {};
+        const tags = (fm.tags || []).map(t => '<span class="okf-tag">' + t + '</span>').join(' ');
+        const sources = (fm.sources || []).map(s => 
+          '<div class="okf-source"><a href="' + s.resource + '" target="_blank">' + s.title + '</a></div>'
+        ).join('');
+        
+        detail.innerHTML = `
+          <h3>${fm.title || path}</h3>
+          <div class="meta">
+            <span class="status ${fm.status || ''}">${fm.status || 'unknown'}</span>
+            ${fm.type ? '<span class="meta-item">' + fm.type + '</span>' : ''}
+            ${fm.stale_after ? '<span class="meta-item">Stale: ' + fm.stale_after + '</span>' : ''}
+          </div>
+          ${fm.description ? '<div class="okf-desc">' + fm.description + '</div>' : ''}
+          ${tags ? '<div class="okf-tags">' + tags + '</div>' : ''}
+          ${sources ? '<div class="okf-sources"><strong>Sources:</strong>' + sources + '</div>' : ''}
+          <div class="body">${renderMarkdown(concept.body || '')}</div>
+        `;
+      } catch (e) {
+        detail.innerHTML = '<div class="okf-detail-placeholder">Error loading concept</div>';
+      }
+    }
+
+    document.querySelectorAll('.okf-filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.okf-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        okfFilter = btn.dataset.type;
+        renderOkfTree();
+      });
+    });
+
+    loadOkf();
+
+    // ─── OKF Generate & Selector Refresh ──────────────────────────
+    document.getElementById('generateOkfBtn').addEventListener('click', () => {
+      const m = document.createElement('div');
+      m.className = 'modal show';
+      m.innerHTML = `
+        <div class="modal-content glass">
+          <div class="modal-header">
+            <span>Generate OKF from JIRA Story</span>
+            <button class="btn-ghost modal-close">✕</button>
+          </div>
+          <div style="padding:16px">
+            <label class="field-label">JIRA Issue Key</label>
+            <input type="text" id="okfIssueKey" class="chat-input" style="width:100%;margin-bottom:12px" placeholder="e.g. SF-101" spellcheck="false">
+            <label class="field-label">Object Name</label>
+            <input type="text" id="okfObjectName" class="chat-input" style="width:100%;margin-bottom:12px" placeholder="e.g. Thoren" spellcheck="false">
+            <div id="okfStatus" style="font-size:12px;color:#818cf8;margin-top:8px"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" id="okfGenerateBtn">Generate OKF</button>
+            <button class="btn-ghost modal-close">Cancel</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(m);
+      m.querySelectorAll('.modal-close').forEach(b => b.onclick = () => m.remove());
+      
+      m.querySelector('#okfGenerateBtn').onclick = async () => {
+        const issueKey = m.querySelector('#okfIssueKey').value.trim();
+        const objectName = m.querySelector('#okfObjectName').value.trim();
+        if (!issueKey) return alert('Enter JIRA issue key');
+        
+        m.querySelector('#okfStatus').textContent = 'Generating OKF...';
+        try {
+          const res = await fetch('/api/okf/generate-from-jira', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ issueKey, objectName: objectName || undefined })
+          });
+          const data = await res.json();
+          if (data.success) {
+            m.querySelector('#okfStatus').innerHTML = '<span style="color:#22c55e">✓ OKF created: ' + data.path + '</span>';
+            loadOkf();
+            setTimeout(() => m.remove(), 2000);
+          } else {
+            m.querySelector('#okfStatus').innerHTML = '<span style="color:#ef4444">Error: ' + data.error + '</span>';
+          }
+        } catch (e) {
+          m.querySelector('#okfStatus').innerHTML = '<span style="color:#ef4444">Error: ' + e.message + '</span>';
+        }
+      };
+    });
+
+    document.getElementById('refreshSelectorsBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('refreshSelectorsBtn');
+      btn.disabled = true;
+      btn.textContent = 'Refreshing...';
+      try {
+        const res = await fetch('/api/okf/selectors/refresh', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          alert('Updated ' + data.updated + ' object selectors');
+          loadOkf();
+        } else {
+          alert('Error: ' + data.error);
+        }
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0118.8-4.3M22 12.5a10 10 0 01-18.8 4.2"/></svg> Refresh Selectors';
+    });
+
+    // Add OKF command to JIRA chat
+    const origSendJiraChat = sendJiraChat;
+    sendJiraChat = function(message) {
+      if (message.toLowerCase().startsWith('okf ')) {
+        const parts = message.split(' ');
+        if (parts.length >= 3) {
+          const issueKey = parts[1];
+          const objectName = parts.slice(2).join(' ');
+          appendJiraChat('<span class="chat-user">You:</span> Generating OKF from ' + issueKey + '...');
+          fetch('/api/okf/generate-from-jira', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ issueKey, objectName })
+          }).then(r => r.json()).then(data => {
+            if (data.success) {
+              appendJiraChat('<span class="chat-ai">✓ OKF created for ' + data.objectName + ' at ' + data.path + '</span>');
+              loadOkf();
+            } else {
+              appendJiraChat('<span class="chat-error">Error: ' + data.error + '</span>');
+            }
+          });
+          return;
+        }
+      }
+      origSendJiraChat(message);
+    };
+
+    function showSaveDialog(content) {
+      const m=document.createElement('div'); m.className='modal show';
+      m.innerHTML='<div class="modal-content glass"><div class="modal-header"><span>Save Agent Output</span><button class="btn-ghost modal-close">✕</button></div><div style="padding:16px"><label class="field-label">File Path</label><input type="text" id="saveFilePath" class="chat-input" style="width:100%;margin-bottom:12px" placeholder="e.g. specs/account-plan.md" spellcheck="false"><label class="field-label">Quick Save</label><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"><button class="btn-tag qs" data-prefix="specs/">specs/</button><button class="btn-tag qs" data-prefix="tests/">tests/</button><button class="btn-tag qs" data-prefix="tasks/">tasks/</button><button class="btn-tag qs" data-prefix="data/">data/</button></div><label class="field-label">Content</label><textarea style="width:100%;height:180px;background:rgba(0,0,0,.3);color:#e2e8f0;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px;font-family:JetBrains Mono,monospace;font-size:12px;resize:vertical" id="saveContent" spellcheck="false"></textarea></div><div class="modal-footer"><button class="btn-primary" id="saveConfirmBtn">Save</button><button class="btn-ghost modal-close">Cancel</button></div></div>';
+      document.body.appendChild(m); m.querySelector('#saveContent').value=content; m.querySelector('#saveFilePath').focus();
+      m.querySelectorAll('.modal-close').forEach(b=>b.onclick=()=>m.remove());
+      m.querySelectorAll('.qs').forEach(b=>b.onclick=()=>{m.querySelector('#saveFilePath').value=b.dataset.prefix+'plan.md';});
+      m.querySelector('#saveConfirmBtn').onclick=()=>{
+        const fp=m.querySelector('#saveFilePath').value.trim(), fc=m.querySelector('#saveContent').value;
+        if(!fp)return alert('Enter a file path');
+        fetch('/api/save-file',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filePath:fp,content:fc})}).then(r=>r.json()).then(d=>{
+          if(d.success){appendAgentChat('<span class="chat-info">Saved: '+d.path+'</span>');m.remove();fetch('/api/files').then(r=>r.json()).then(d=>{projectFiles=d.files||[];});}
+          else alert('Failed: '+d.error);
+        });
+      };
+    }
+  </script>
+</body>
+</html>

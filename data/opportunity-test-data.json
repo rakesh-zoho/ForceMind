@@ -1,0 +1,60 @@
+{
+  "requiredFieldsOnly": {
+    "opportunityName": "Test Opportunity-{{timestamp}}",
+    "closeDate": "{{datePlus30}}",
+    "stage": "Prospecting",
+    "accountName": "Test"
+  },
+  "allStandardFields": {
+    "opportunityName": "Full Opportunity-{{timestamp}}",
+    "closeDate": "{{datePlus30}}",
+    "stage": "Qualification",
+    "amount": "50000",
+    "description": "Test opportunity for automated testing",
+    "accountName": "Test"
+  },
+  "withDescription": {
+    "opportunityName": "Described Opportunity-{{timestamp}}",
+    "closeDate": "{{datePlus30}}",
+    "stage": "Prospecting",
+    "description": "This is a detailed description for the opportunity covering all requirements and scope.",
+    "accountName": "Test"
+  },
+  "missingName": {
+    "opportunityName": "",
+    "closeDate": "{{datePlus30}}",
+    "stage": "Prospecting",
+    "accountName": "Test"
+  },
+  "missingStage": {
+    "opportunityName": "No Stage Opportunity-{{timestamp}}",
+    "closeDate": "{{datePlus30}}",
+    "stage": "",
+    "accountName": "Test"
+  },
+  "missingCloseDate": {
+    "opportunityName": "No Date Opportunity-{{timestamp}}",
+    "closeDate": "",
+    "stage": "Prospecting",
+    "accountName": "Test"
+  },
+  "invalidAmount": {
+    "opportunityName": "Bad Amount Opportunity-{{timestamp}}",
+    "closeDate": "{{datePlus30}}",
+    "stage": "Prospecting",
+    "amount": "abc",
+    "accountName": "Test"
+  },
+  "withAccount": {
+    "opportunityName": "Account Opportunity-{{timestamp}}",
+    "closeDate": "{{datePlus30}}",
+    "stage": "Qualification",
+    "accountName": "Test"
+  },
+  "specialCharacters": {
+    "opportunityName": "O'Brien & Söns — 100% Deal {{timestamp}}",
+    "closeDate": "{{datePlus30}}",
+    "stage": "Prospecting",
+    "accountName": "Test"
+  }
+}

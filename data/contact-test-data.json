@@ -1,0 +1,15 @@
+{
+  "requiredFieldsOnly": {
+    "firstName": "Contact",
+    "lastName": "Test-{{timestamp}}",
+    "accountName": "Acme Corporation"
+  },
+  "allStandardFields": {
+    "firstName": "Full",
+    "lastName": "Contact-{{timestamp}}",
+    "accountName": "Tech Innovations Inc",
+    "phone": "+1-555-222-3333",
+    "email": "contact.{{timestamp}}@test.com",
+    "title": "VP Engineering"
+  }
+}

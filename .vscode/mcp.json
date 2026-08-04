@@ -1,0 +1,26 @@
+{
+  "servers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ],
+      "type": "stdio"
+    },
+    "playwright-test": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "playwright",
+        "run-test-mcp-server"
+      ]
+    },
+    "salesforce": {
+      "type": "http",
+      "url": "https://api.salesforce.com/platform/mcp/v1/platform/sobject-all",
+      "oauth": {
+        "clientId": "3MVG9GBhY6wQjl2vmOksB1OaNFdrNt7e7Ur017vQP4nTsMTptIahiqs9ddPfDZCCIeEi2TwHjRI.oowo_HYM."
+      }
+    }
+  }
+}

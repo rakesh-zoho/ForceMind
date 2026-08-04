@@ -1,0 +1,17 @@
+{
+  "basicCase": {
+    "subject": "Test Case-{{timestamp}}",
+    "status": "New",
+    "priority": "Medium",
+    "origin": "Phone",
+    "description": "Automated test case for validation"
+  },
+  "allFields": {
+    "subject": "Full Case-{{timestamp}}",
+    "status": "New",
+    "priority": "Hidgh",
+    "type": "Problem",
+    "origin": "Phone",
+    "description": "Comprehensive test case with all standard fields"
+  }
+}
