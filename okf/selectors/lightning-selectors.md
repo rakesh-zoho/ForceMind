@@ -281,3 +281,36 @@ stale_after: 2026-11-03T00:00:00.000Z
 | com | `.com` |
 | toBeTruthy | `.toBeTruthy` |
 
+
+
+# sf 216 Object
+
+| Element | Selector |
+|---------|----------|
+| js | `.js` |
+| describe | `.describe` |
+| beforeEach | `.beforeEach` |
+| navigate | `.navigate` |
+| afterEach | `.afterEach` |
+| status | `.status` |
+| expectedStatus | `.expectedStatus` |
+| title | `.title` |
+| clickNew | `.clickNew` |
+| fillRequiredFields | `.fillRequiredFields` |
+| save | `.save` |
+| toHaveURL | `.toHaveURL` |
+| locator | `.locator` |
+| first | `.first` |
+| toContainText | `.toContainText` |
+| name | `.name` |
+| isFormOpen | `.isFormOpen` |
+| toBeTruthy | `.toBeTruthy` |
+| toastMessage | `.toastMessage` |
+| isVisible | `.isVisible` |
+| not | `.not` |
+| fillBoundaryFields | `.fillBoundaryFields` |
+| substring | `.substring` |
+| filter | `.filter` |
+| toBeVisible | `.toBeVisible` |
+| serialNumber | `.serialNumber` |
+

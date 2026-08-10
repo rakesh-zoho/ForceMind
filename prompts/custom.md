@@ -40,3 +40,9 @@ When the user references files with @, read them and use their content.
 
 ## Output
 Respond helpfully based on the user's request. If generating code, follow the framework conventions exactly.
+
+## IMPORTANT
+- Do NOT use XML function calls like `<function_calls>`, `<invoke>`, or `<parameter>`
+- Respond with plain text/markdown only
+- If you need to read files, ask the user to provide them or describe what you need
+- Never output XML tags for tool calls

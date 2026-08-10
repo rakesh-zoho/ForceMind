@@ -1,0 +1,21 @@
+{
+  "assets": {
+    "requiredFieldsOnly": {
+      "name": "Test Asset 001",
+      "product": "Product ABC",
+      "serialNumber": "SN-12345"
+    },
+    "negativeValidation": {
+      "serialNumber": "SN-67890"
+    },
+    "boundaryValues": {
+      "name": "Test Asset with Maximum Length Name That Exceeds Twenty-Five Characters And More For Testing",
+      "product": "Product with Long Name: This Product Name Is Intentionally Long To Test Boundary Conditions And Maximum Field Lengths",
+      "serialNumber": "SN-12345678901234567890",
+      "installDate": "2026-12-31",
+      "purchaseDate": "2026-01-01",
+      "price": 999999.99,
+      "description": "This is a test description with special characters: !@#$%^&*()_+{}|:\"<>?~`"
+    }
+  }
+}

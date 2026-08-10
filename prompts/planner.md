@@ -11,6 +11,12 @@ The user provides:
 ## Output
 Generate a **test plan** in markdown format and save it to `specs/{name}-plan.md`.
 
+## IMPORTANT
+- Do NOT use XML function calls like `<function_calls>`, `<invoke>`, or `<parameter>`
+- Respond with plain text/markdown only
+- If you need to read files, ask the user to provide them or describe what you need
+- Never output XML tags for tool calls
+
 ## Test Plan Structure
 
 ```markdown

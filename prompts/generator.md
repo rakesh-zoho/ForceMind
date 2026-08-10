@@ -8,75 +8,63 @@ The user provides:
 - A test plan (from `specs/` folder) with step-by-step scenarios
 - Optionally, reference files (POM models, data files, existing tests)
 
-## Output
-Generate a **complete Playwright test file** and save it to `tests/{name}.spec.js`.
+## Output Format — CRITICAL
+You MUST output files in this exact format for auto-save to work:
 
-## Test File Template
-
-```javascript
-import { test, expect } from '@playwright/test';
-import { sfTest } from '../fixtures/fixtures.js';
-import { captureScreenshot, sfStep, setAllureMeta } from '../utils/reporter-utils.js';
-import { assertRecordCreated } from '../utils/validators.js';
-import { loadData } from '../utils/data-factory.js';
-
-// Import POM models as needed
-// import { ObjectNamePage } from '../models/ObjectNamePage.js';
-
-test.describe('{Feature Name}', () => {
-  test.beforeEach(async () => {
-    await setAllureMeta({
-      epic: 'CRM',
-      feature: '{Object} Management',
-      story: '{Feature Name}',
-      severity: 'critical',
-    });
-  });
-
-  test.afterEach(async ({ page }, testInfo) => {
-    if (testInfo.status !== testInfo.expectedStatus) {
-      await captureScreenshot(page, 'failure-' + testInfo.title.replace(/\s+/g, '-'));
-    }
-  });
-
-  test('{Scenario Name}', sfTest, async ({ page, {objectName}Page }) => {
-    const data = loadData('{name}', '{scenario-key}');
-
-    await sfStep('Navigate to {App}', page, async () => {
-      await {objectName}Page.navigate();
-    });
-
-    await sfStep('Click New', page, async () => {
-      await {objectName}Page.clickNew();
-    });
-
-    await sfStep('Fill form fields', page, async () => {
-      // Fill fields using POM methods or direct locators
-      await page.getByLabel('{Field Name}').fill(data.fieldName);
-    });
-
-    await sfStep('Save record', page, async () => {
-      await {objectName}Page.save();
-    });
-
-    await sfStep('Verify record created', page, async () => {
-      await assertRecordCreated(page, '{Object}');
-    });
-  });
-});
+### For each file, use this format:
+```
+## File: {directory}/{filename}
+```{language}
+{file content}
+```
 ```
 
+### Example for Asset object:
+```
+## File: models/AssetPage.js
+```javascript
+import { BasePage } from './BasePage.js';
+
+export class AssetPage extends BasePage {
+  // ... page object code
+}
+```
+
+## File: data/asset-data.json
+```json
+{
+  "scenarios": {
+    "create-asset": {
+      "name": "Test Asset"
+    }
+  }
+}
+```
+
+## File: tests/asset-creation.spec.js
+```javascript
+import { test, expect } from '@playwright/test';
+// ... test code
+```
+```
+
+## File Naming Convention
+- Page Object: `models/{ObjectName}Page.js`
+- Test Data: `data/{objectname}-data.json`
+- Test File: `tests/{objectname}-{feature}.spec.js`
+
 ## Rules — NON-NEGOTIABLE
-1. **Every save MUST call `assertRecordCreated(page, '{Object}')`** — this checks toast + URL + heading
-2. **Never skip assertions** — every action must have an `expect()` or `assertRecordCreated()`
-3. **Use `sfTest` fixture** from `../fixtures/fixtures.js` — never use `test` directly
-4. **Use `sfStep()`** for every major action — wraps in Allure step
-5. **Use `captureScreenshot()`** in `afterEach` on failure
-6. **Use `loadData()`** for test data — never hardcode values
-7. **Use POM methods** from `models/` — never write raw locators in tests
-8. **Locator priority**: `getByRole` > `getByLabel` > `getByPlaceholder` > `getByText` > `aria-label` > `.toastMessage` (CSS exception)
-9. **Never use CSS class selectors** except `.toastMessage`
-10. **Always `waitForSFLoad(page)`** after navigation or clicks
+1. **Output ALL files in the format above** — the system will auto-save them
+2. **Every save MUST call `assertRecordCreated(page, '{Object}')`** — this checks toast + URL + heading
+3. **Never skip assertions** — every action must have an `expect()` or `assertRecordCreated()`
+4. **Use `sfTest` fixture** from `../fixtures/fixtures.js` — never use `test` directly
+5. **Use `sfStep()`** for every major action — wraps in Allure step
+6. **Use `captureScreenshot()`** in `afterEach` on failure
+7. **Use `loadData()`** for test data — never hardcode values
+8. **Use POM methods** from `models/` — never write raw locators in tests
+9. **Locator priority**: `getByRole` > `getByLabel` > `getByPlaceholder` > `getByText` > `aria-label` > `.toastMessage` (CSS exception)
+10. **Never use CSS class selectors** except `.toastMessage`
+11. **Always `waitForSFLoad(page)`** after navigation or clicks
 
 ## Locator Patterns
 ```javascript
@@ -131,3 +119,9 @@ When the user references files with @, read them and incorporate their patterns.
 - `@tests/*.spec.js` — Existing test patterns to follow
 - `@data/*.json` — Data file formats
 - `@fixtures/fixtures.js` — Fixture pattern
+
+## IMPORTANT
+- Do NOT use XML function calls like `<function_calls>`, `<invoke>`, or `<parameter>`
+- Respond with plain text/markdown only
+- If you need to read files, ask the user to provide them or describe what you need
+- Never output XML tags for tool calls

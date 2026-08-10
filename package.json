@@ -4,6 +4,7 @@
   "type": "module",
   "description": "AI-driven Salesforce automation with Playwright POM + MCP + Agentic Agents",
   "scripts": {
+    "start": "node server/index.js",
     "test": "npx playwright test --config=config/playwright.config.js",
     "test:headed": "npx playwright test --config=config/playwright.config.js --headed",
     "test:debug": "npx playwright test --config=config/playwright.config.js --debug",
@@ -17,6 +18,7 @@
     "test:conversion": "npx playwright test --config=config/playwright.config.js tests/lead-conversion.spec.js",
     "test:contact-mcp": "npx playwright test --config=config/playwright.config.js tests/contact-mcp-crud.spec.js",
     "test:contact-mcp:keep": "cross-env CLEANUP=false npx playwright test --config=config/playwright.config.js tests/contact-mcp-crud.spec.js",
+    "test:file": "npx playwright test --config=config/playwright.config.js",
     "test:heal": "node scripts/self-heal.js",
     "test:heal:lead": "node scripts/self-heal.js tests/lead-creation.spec.js",
     "test:all": "node scripts/self-heal.js tests/*.spec.js",

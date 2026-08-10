@@ -109,7 +109,7 @@ const PROVIDERS = {
       messages,
       stream: true,
       temperature: opts?.temperature ?? 0.3,
-      max_tokens: opts?.maxTokens ?? 4096
+      max_tokens: opts?.maxTokens ?? 16384
     }),
     parseStream: parseOpenAIStream
   }

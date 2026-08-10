@@ -202,16 +202,49 @@ app.get('/api/jira/status', (req, res) => {
 
 // ─── LLM Agent API ─────────────────────────────────────────────────
 
-const AGENTS = [
-  { id: 'planner', name: 'Planner Agent', description: 'Analyze tasks and create test plans', prompt: 'planner.md' },
-  { id: 'generator', name: 'Generator Agent', description: 'Generate Playwright test code from plans', prompt: 'generator.md' },
-  { id: 'healer', name: 'Healer Agent', description: 'Diagnose and fix failing tests', prompt: 'healer.md' },
-  { id: 'custom', name: 'Custom Agent', description: 'Flexible assistant for any task', prompt: 'custom.md' },
-];
+const GITHUB_AGENTS_DIR = path.join(ROOT, '.github', 'agents');
+
+// Load agents from both prompts/ and .github/agents/
+function loadAllAgents() {
+  const agents = [];
+  
+  // Dashboard agents from prompts/
+  agents.push(
+    { id: 'planner', name: 'Planner Agent', description: 'Analyze tasks and create test plans', prompt: 'planner.md', source: 'dashboard' },
+    { id: 'generator', name: 'Generator Agent', description: 'Generate Playwright test code from plans', prompt: 'generator.md', source: 'dashboard' },
+    { id: 'healer', name: 'Healer Agent', description: 'Diagnose and fix failing tests', prompt: 'healer.md', source: 'dashboard' },
+    { id: 'custom', name: 'Custom Agent', description: 'Flexible assistant for any task', prompt: 'custom.md', source: 'dashboard' }
+  );
+  
+  // Load .github/agents/*.agent.md files
+  if (existsSync(GITHUB_AGENTS_DIR)) {
+    try {
+      const files = readdirSync(GITHUB_AGENTS_DIR).filter(f => f.endsWith('.agent.md'));
+      for (const file of files) {
+        const id = file.replace('.agent.md', '');
+        const name = id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        agents.push({
+          id: `gh-${id}`,
+          name: name,
+          description: `${name} (from .github/agents)`,
+          prompt: path.join('.github', 'agents', file),
+          source: 'github'
+        });
+      }
+    } catch (e) {
+      console.warn('Failed to load .github/agents:', e.message);
+    }
+  }
+  
+  return agents;
+}
+
+let AGENTS = loadAllAgents();
 
 // API: List available agents
 app.get('/api/agents', (req, res) => {
   reloadEnv(); // Reload .env to pick up changes
+  AGENTS = loadAllAgents(); // Refresh agents list
   const config = getActiveConfig();
   res.json({ agents: AGENTS, llm: config });
 });
@@ -482,6 +515,118 @@ app.post('/api/okf/selectors/refresh', (req, res) => {
   }
 });
 
+// ─── Healer API ──────────────────────────────────────────────────────
+
+// API: Run a test file and capture output
+app.post('/api/healer/run-test', async (req, res) => {
+  try {
+    const { testFile } = req.body;
+    if (!testFile) return res.json({ success: false, error: 'testFile is required' });
+    
+    const resolved = path.resolve(ROOT, testFile);
+    if (!resolved.startsWith(ROOT) || !existsSync(resolved)) {
+      return res.json({ success: false, error: 'Test file not found' });
+    }
+    
+    // Run the test and capture output
+    const cmd = `npx playwright test "${resolved}" --reporter=line`;
+    const result = await new Promise((resolve, reject) => {
+      exec(cmd, { cwd: ROOT, timeout: 180000, env: { ...process.env, FORCE_COLOR: '0' } }, (err, stdout, stderr) => {
+        resolve({ stdout, stderr, exitCode: err?.code || 0 });
+      });
+    });
+    
+    // Parse test results
+    const passed = (result.stdout.match(/(\d+)\s+passed/) || [0, 0])[1];
+    const failed = (result.stdout.match(/(\d+)\s+failed/) || [0, 0])[1];
+    const output = result.stdout + (result.stderr ? '\n' + result.stderr : '');
+    
+    res.json({ 
+      success: true, 
+      passed: parseInt(passed),
+      failed: parseInt(failed),
+      output,
+      testFile: resolved
+    });
+  } catch (e) {
+    res.json({ success: false, error: e.message });
+  }
+});
+
+// API: Run test and get failure details for healer
+app.post('/api/healer/analyze', async (req, res) => {
+  try {
+    const { testFile } = req.body;
+    if (!testFile) return res.json({ success: false, error: 'testFile is required' });
+    
+    const resolved = path.resolve(ROOT, testFile);
+    if (!resolved.startsWith(ROOT) || !existsSync(resolved)) {
+      return res.json({ success: false, error: 'Test file not found' });
+    }
+    
+    // Run test with JSON reporter for detailed output
+    const cmd = `npx playwright test "${resolved}" --reporter=json`;
+    const result = await new Promise((resolve, reject) => {
+      exec(cmd, { cwd: ROOT, timeout: 180000, env: { ...process.env, FORCE_COLOR: '0' } }, (err, stdout, stderr) => {
+        resolve({ stdout, stderr, exitCode: err?.code || 0 });
+      });
+    });
+    
+    let testResults = null;
+    try {
+      // Extract JSON from output (may have other text)
+      const jsonMatch = result.stdout.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        testResults = JSON.parse(jsonMatch[0]);
+      }
+    } catch {}
+    
+    // Also run with line reporter for readable output
+    const cmdLine = `npx playwright test "${resolved}" --reporter=line`;
+    const lineResult = await new Promise((resolve, reject) => {
+      exec(cmdLine, { cwd: ROOT, timeout: 180000, env: { ...process.env, FORCE_COLOR: '0' } }, (err, stdout, stderr) => {
+        resolve({ stdout, stderr, exitCode: err?.code || 0 });
+      });
+    });
+    
+    // Extract failure details
+    const failures = [];
+    if (testResults?.suites) {
+      for (const suite of testResults.suites) {
+        for (const spec of suite.specs || []) {
+          for (const test of spec.tests || []) {
+            for (const result of test.results || []) {
+              if (result.status === 'failed' || result.status === 'timedOut') {
+                failures.push({
+                  title: spec.title,
+                  suite: suite.title,
+                  status: result.status,
+                  error: result.error?.message || 'Unknown error',
+                  stack: result.error?.stack || '',
+                  steps: result.steps || []
+                });
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    res.json({ 
+      success: true, 
+      testFile: resolved,
+      exitCode: result.exitCode,
+      output: lineResult.stdout + (lineResult.stderr ? '\n' + lineResult.stderr : ''),
+      failures,
+      totalTests: testResults?.stats?.expected || 0,
+      failedTests: testResults?.stats?.unexpected || 0,
+      passedTests: testResults?.stats?.expected || 0
+    });
+  } catch (e) {
+    res.json({ success: false, error: e.message });
+  }
+});
+
 // WebSocket
 wss.on('connection', (ws) => {
   ws.on('message', (data) => {
@@ -520,7 +665,15 @@ wss.on('connection', (ws) => {
 function loadAgentPrompt(agentId) {
   const agent = AGENTS.find(a => a.id === agentId);
   if (!agent) throw new Error(`Unknown agent: ${agentId}`);
-  const promptPath = path.join(PROMPTS_DIR, agent.prompt);
+  
+  // Handle .github/agents path (relative to ROOT) or prompts/ directory
+  let promptPath;
+  if (agent.source === 'github') {
+    promptPath = path.join(ROOT, agent.prompt);
+  } else {
+    promptPath = path.join(PROMPTS_DIR, agent.prompt);
+  }
+  
   if (!existsSync(promptPath)) throw new Error(`Prompt not found: ${agent.prompt}`);
   return readFileSync(promptPath, 'utf8');
 }
@@ -627,6 +780,8 @@ async function handleLlmChat(msg, ws) {
         if (trimmed.startsWith('data: ')) {
           const data = trimmed.slice(6).trim();
           if (data === '[DONE]') {
+            // Process and save files from complete response
+            await processAndSaveFiles(fullContent, agent, send);
             send('llm-done', fullContent);
             return;
           }
@@ -636,7 +791,11 @@ async function handleLlmChat(msg, ws) {
             const delta = json.choices?.[0]?.delta?.content;
             if (delta) { parsed = { content: delta }; }
             // Anthropic format
-            if (json.type === 'message_stop') { send('llm-done', fullContent); return; }
+            if (json.type === 'message_stop') { 
+              await processAndSaveFiles(fullContent, agent, send);
+              send('llm-done', fullContent); 
+              return; 
+            }
             if (json.type === 'content_block_delta' && json.delta?.text) { parsed = { content: json.delta.text }; }
           } catch {}
         } else if (trimmed.startsWith('event: ')) {
@@ -645,7 +804,11 @@ async function handleLlmChat(msg, ws) {
           // Try parsing as raw JSON (Anthropic sometimes sends bare JSON)
           try {
             const json = JSON.parse(trimmed);
-            if (json.type === 'message_stop') { send('llm-done', fullContent); return; }
+            if (json.type === 'message_stop') { 
+              await processAndSaveFiles(fullContent, agent, send);
+              send('llm-done', fullContent); 
+              return; 
+            }
             if (json.type === 'content_block_delta' && json.delta?.text) { parsed = { content: json.delta.text }; }
           } catch {}
         }
@@ -657,9 +820,114 @@ async function handleLlmChat(msg, ws) {
       }
     }
 
+    // Process and save files from complete response
+    await processAndSaveFiles(fullContent, agent, send);
     send('llm-done', fullContent);
   } catch (e) {
     send('llm-error', e.message);
+  }
+}
+
+// ─── Auto-save files from agent responses ─────────────────────────────
+async function processAndSaveFiles(content, agent, send) {
+  if (agent !== 'generator' && agent !== 'healer') return;
+
+  // Extract code blocks with file paths
+  const codeBlockRegex = /```(?:javascript|js|json|markdown|md)?\s*\n(?:(?:\/\/?\s*)?(?:File:?\s*)?(?:Save\s+(?:to\s+)?|Path:?\s*)?[\/\w\-\.]+\.(?:js|json|md))\n([\s\S]*?)```/gi;
+  const fileSaveRegex = /(?:\/\/?\s*)?(?:File:?\s*)?(?:Save\s+(?:to\s+)?|Path:?\s*)([\/\w\-\.]+\.(?:js|json|md))/i;
+  
+  // Also look for explicit file path mentions before code blocks
+  const explicitPathRegex = /(?:^|\n)(?:##?\s*)?(?:File|Path|Save\s+to|Output)[:\s]+([\/\w\-\.]+\.(?:js|json|md))\s*\n```/gi;
+
+  const savedFiles = [];
+  
+  // Find all code blocks
+  const codeBlocks = content.match(/```[\s\S]*?```/g) || [];
+  
+  for (const block of codeBlocks) {
+    // Extract the code content
+    const codeMatch = block.match(/```(?:\w+)?\s*\n([\s\S]*?)```/);
+    if (!codeMatch) continue;
+    const code = codeMatch[1].trim();
+    
+    // Try to find file path in the block or surrounding text
+    let filePath = null;
+    
+    // Check for path in the code block header
+    const headerMatch = block.match(/```(?:\w+)?\s+([\/\w\-\.]+\.(?:js|json|md))/);
+    if (headerMatch) {
+      filePath = headerMatch[1];
+    }
+    
+    // Check for path comment at start of code
+    if (!filePath) {
+      const commentMatch = code.match(/^(?:\/\/|#|\/\*|\*)\s*(?:File|Path|Save\s*to)[:\s]+([\/\w\-\.]+\.(?:js|json|md))/i);
+      if (commentMatch) {
+        filePath = commentMatch[1];
+      }
+    }
+    
+    // Check for explicit path in text before the code block
+    if (!filePath) {
+      const blockIndex = content.indexOf(block);
+      const textBefore = content.substring(Math.max(0, blockIndex - 200), blockIndex);
+      const pathMatch = textBefore.match(/(?:File|Path|Save\s+to|Output)[:\s]+([\/\w\-\.]+\.(?:js|json|md))\s*$/i);
+      if (pathMatch) {
+        filePath = pathMatch[1];
+      }
+    }
+    
+    // For generator agent, infer paths from content
+    if (!filePath && agent === 'generator') {
+      // Check if it looks like a test file
+      if (code.includes('test.describe') || code.includes('test(')) {
+        // Extract test name from describe block
+        const describeMatch = code.match(/test\.describe\(['"]([^'"]+)/);
+        if (describeMatch) {
+          const testName = describeMatch[1].toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          filePath = `tests/${testName}.spec.js`;
+        }
+      }
+      // Check if it looks like a POM file
+      else if (code.includes('Page') && (code.includes('navigate') || code.includes('click'))) {
+        const classMatch = code.match(/class\s+(\w+Page)/);
+        if (classMatch) {
+          const pageName = classMatch[1].replace('Page', '').toLowerCase();
+          filePath = `models/${pageName}Page.js`;
+        }
+      }
+      // Check if it looks like JSON data
+      else if (code.trim().startsWith('{') && code.trim().endsWith('}')) {
+        try {
+          const json = JSON.parse(code);
+          if (json.scenarios) {
+            filePath = `data/test-data.json`;
+          }
+        } catch {}
+      }
+    }
+    
+    if (filePath) {
+      // Ensure directory exists
+      const fullPath = path.join(ROOT, filePath);
+      const dir = path.dirname(fullPath);
+      if (!existsSync(dir)) {
+        mkdirSync(dir, { recursive: true });
+      }
+      
+      // Save the file
+      try {
+        writeFileSync(fullPath, code, 'utf8');
+        savedFiles.push(filePath);
+        send('llm-info', `✅ Saved: ${filePath}`);
+      } catch (e) {
+        send('llm-error', `Failed to save ${filePath}: ${e.message}`);
+      }
+    }
+  }
+  
+  if (savedFiles.length > 0) {
+    send('llm-info', `\n📁 Auto-saved ${savedFiles.length} file(s): ${savedFiles.join(', ')}`);
   }
 }
 
@@ -838,5 +1106,5 @@ function runCommand(cmd, ws) {
   });
 }
 
-const PORT = process.env.DASHBOARD_PORT || 3000;
+const PORT = process.env.PORT || process.env.DASHBOARD_PORT || 3000;
 server.listen(PORT, () => console.log('Dashboard: http://localhost:' + PORT));

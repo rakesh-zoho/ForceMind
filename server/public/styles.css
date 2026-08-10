@@ -156,6 +156,7 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; transiti
 .mention-item:hover, .mention-item.active { }
 .mention-dir { opacity: 0.5; font-size: 11px; }
 .mention-name { font-weight: 500; }
+.mention-header { padding: 6px 14px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; opacity: 0.6; border-bottom: 1px solid rgba(255,255,255,0.06); }
 .chat-response { margin-bottom: 8px; line-height: 1.6; }
 .chat-response pre { border-radius: var(--r-sm); padding: 12px; margin: 8px 0; overflow-x: auto; }
 .chat-response code { font-family: var(--mono); font-size: 12px; }
@@ -163,6 +164,8 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; transiti
 .chat-response h2, .chat-response h3, .chat-response h4 { margin: 10px 0 6px; }
 .streaming { border-right: 2px solid; animation: blink 0.8s infinite; padding-right: 2px; display: inline; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 .reports-body, .quick-body { display: flex; gap: 8px; padding: 14px 16px; flex-wrap: wrap; }
 
 /* ─── MODAL ───────────────────────────────────────────────────── */
@@ -281,6 +284,7 @@ body[data-theme="bento"] .mention-item { color: #e2e8f0; }
 body[data-theme="bento"] .mention-item:hover, body[data-theme="bento"] .mention-item.active { background: rgba(99,102,241,0.15); }
 body[data-theme="bento"] .mention-dir { color: #6366f1; }
 body[data-theme="bento"] .mention-name { color: #e2e8f0; }
+body[data-theme="bento"] .mention-header { color: #6366f1; border-color: rgba(99,102,241,0.2); }
 body[data-theme="bento"] .chat-response { color: #e2e8f0; }
 body[data-theme="bento"] .chat-response pre { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.06); }
 body[data-theme="bento"] .chat-response code { color: #fbbf24; }
@@ -454,6 +458,7 @@ body[data-theme="neon"] .mention-item:hover, body[data-theme="neon"] .mention-it
   background: rgba(168,85,247,0.12); box-shadow: inset 0 0 10px rgba(168,85,247,0.08);
 }
 body[data-theme="neon"] .mention-dir { color: #475569; }
+body[data-theme="neon"] .mention-header { color: #a855f7; border-color: rgba(168,85,247,0.2); }
 body[data-theme="neon"] .chat-response { color: #e2e8f0; }
 body[data-theme="neon"] .chat-response pre {
   background: rgba(5,5,16,0.6); border: 1px solid rgba(168,85,247,0.1);
