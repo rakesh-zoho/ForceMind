@@ -182,6 +182,15 @@ body { font-family: var(--sans); min-height: 100vh; overflow-x: hidden; transiti
 .status-dot { width: 6px; height: 6px; border-radius: 50%; transition: all 0.3s; }
 .status-dot.running { animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.okf-status-badge {
+  display: flex; align-items: center; gap: 5px; padding: 5px 10px;
+  border-radius: 20px; font-size: 11px; font-weight: 500; cursor: pointer;
+  transition: all 0.3s; border: 1px solid transparent;
+}
+.okf-status-badge:hover { transform: scale(1.05); }
+.okf-status-badge.fresh { color: #22c55e; border-color: rgba(34,197,94,0.3); }
+.okf-status-badge.stale { color: #f59e0b; border-color: rgba(245,158,11,0.3); animation: pulse 2s infinite; }
+.okf-status-badge.empty { color: #64748b; border-color: rgba(100,116,139,0.3); }
 
 /* ═══════════════════════════════════════════════════════════════════
    BENTO THEME (default)
@@ -207,6 +216,9 @@ body[data-theme="bento"] .status-badge.running { border-color: rgba(251,191,36,0
 body[data-theme="bento"] .status-dot { background: #64748b; }
 body[data-theme="bento"] .status-dot.running { background: #fbbf24; box-shadow: 0 0 8px #fbbf24; }
 body[data-theme="bento"] .status-dot.idle { background: #34d399; }
+body[data-theme="bento"] .okf-status-badge { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.06); }
+body[data-theme="bento"] .okf-status-badge.fresh { background: rgba(34,197,94,0.1); }
+body[data-theme="bento"] .okf-status-badge.stale { background: rgba(245,158,11,0.1); }
 
 /* Bento KPI */
 body[data-theme="bento"] .kpi-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); }
@@ -328,6 +340,9 @@ body[data-theme="neon"] .status-badge.running { border-color: rgba(251,191,36,0.
 body[data-theme="neon"] .status-dot { background: #06b6d4; box-shadow: 0 0 6px #06b6d4; }
 body[data-theme="neon"] .status-dot.running { background: #fbbf24; box-shadow: 0 0 10px #fbbf24; }
 body[data-theme="neon"] .status-dot.idle { background: #34d399; box-shadow: 0 0 8px #34d399; }
+body[data-theme="neon"] .okf-status-badge { background: rgba(6,182,212,0.08); border-color: rgba(6,182,212,0.2); color: #06b6d4; }
+body[data-theme="neon"] .okf-status-badge.fresh { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.3); color: #22c55e; box-shadow: 0 0 10px rgba(34,197,94,0.2); }
+body[data-theme="neon"] .okf-status-badge.stale { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); color: #f59e0b; box-shadow: 0 0 10px rgba(245,158,11,0.2); }
 
 /* Neon KPI */
 body[data-theme="neon"] .kpi-card {

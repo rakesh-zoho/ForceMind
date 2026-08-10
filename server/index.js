@@ -358,7 +358,7 @@ app.get('/api/jira/issue/:key', async (req, res) => {
 // API: Generate task files from JIRA issues
 app.post('/api/jira/generate-tasks', async (req, res) => {
   try {
-    const { issueKeys } = req.body;
+    const { issueKeys, autoGenerateOkf } = req.body;
     if (!issueKeys || !Array.isArray(issueKeys) || issueKeys.length === 0) {
       return res.json({ success: false, error: 'Provide issueKeys array' });
     }
@@ -380,11 +380,27 @@ app.post('/api/jira/generate-tasks', async (req, res) => {
     }
 
     const created = issuesToTaskFiles(issues, TASKS_DIR);
+    
+    // Auto-generate OKF files if requested
+    let okfFiles = [];
+    if (autoGenerateOkf) {
+      for (const issue of issues) {
+        try {
+          const objectName = issue.fields?.issuetype?.name || 'Custom';
+          const content = generateOkfFromJiraIssue(issue, objectName);
+          const filePath = saveOkfFile(objectName.toLowerCase(), content);
+          okfFiles.push(path.relative(ROOT, filePath));
+        } catch (e) {
+          console.warn(`Failed to generate OKF for ${issue.key}:`, e.message);
+        }
+      }
+    }
 
     res.json({
       success: true,
       count: created.length,
-      files: created.map(f => ({ key: f.key, summary: f.summary, fileName: f.fileName }))
+      files: created.map(f => ({ key: f.key, summary: f.summary, fileName: f.fileName })),
+      okfFiles
     });
   } catch (e) {
     res.json({ success: false, error: e.message });
@@ -417,6 +433,45 @@ app.get('/api/okf/staleness', (req, res) => {
     res.json(checkStaleness());
   } catch (e) {
     res.json({ error: e.message });
+  }
+});
+
+// OKF Status endpoint - returns count, staleness, and freshness
+app.get('/api/okf/status', (req, res) => {
+  try {
+    const graph = buildGraph();
+    const stale = checkStaleness();
+    const okfPath = path.join(ROOT, 'okf');
+    
+    // Get last modified time of OKF files
+    let lastModified = null;
+    const walkForTime = (dir) => {
+      if (!existsSync(dir)) return;
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          walkForTime(fullPath);
+        } else if (entry.name.endsWith('.md')) {
+          try {
+            const stat = { mtime: require('fs').statSync(fullPath).mtime };
+            if (!lastModified || stat.mtime > lastModified) {
+              lastModified = stat.mtime;
+            }
+          } catch {}
+        }
+      }
+    };
+    walkForTime(okfPath);
+    
+    res.json({
+      total: graph.nodes?.length || 0,
+      stale: stale.length,
+      staleFiles: stale,
+      lastModified: lastModified,
+      fresh: stale.length === 0
+    });
+  } catch (e) {
+    res.json({ error: e.message, total: 0, stale: 0, fresh: true });
   }
 });
 
@@ -1017,6 +1072,22 @@ async function handleChatMessage(message, ws) {
         send('chat', `  \x1b[1m${f.fileName}\x1b[0m\r\n`);
         send('chat', `    JIRA: ${f.key} — ${f.summary}\x1b[0m\r\n`);
         send('chat', `    Path: tasks/${f.fileName}\r\n\r\n`);
+      }
+
+      // Auto-generate OKF files from JIRA issues
+      send('chat', '\x1b[33mGenerating OKF files...\x1b[0m\r\n');
+      let okfCount = 0;
+      for (const issue of issues) {
+        try {
+          const objectName = issue.fields?.issuetype?.name || 'Custom';
+          const content = generateOkfFromJiraIssue(issue, objectName);
+          const filePath = saveOkfFile(objectName.toLowerCase(), content);
+          const relPath = path.relative(ROOT, filePath);
+          send('chat', `  \x1b[32mOKF: ${relPath}\x1b[0m\r\n`);
+          okfCount++;
+        } catch (e) {
+          send('chat', `  \x1b[31mOKF failed for ${issue.key}: ${e.message}\x1b[0m\r\n`);
+        }
       }
 
       send('chat', '\x1b[36mNext steps:\x1b[0m\r\n');

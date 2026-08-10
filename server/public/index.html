@@ -131,6 +131,13 @@
           <span class="status-dot" id="statusDot"></span>
           <span id="statusText">Ready</span>
         </div>
+        <div class="okf-status-badge" id="okfStatusBadge" title="OKF Knowledge Base Status">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          <span id="okfStatusText">OKF</span>
+        </div>
         <button id="envBtn" class="btn-icon" title="Environment Variables">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.421 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.421-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.116l.094-.318z"/></svg>
         </button>
@@ -407,8 +414,47 @@
     const openAllureBtn = $('openAllureBtn');
     const openPwBtn = $('openPwBtn');
     const genReportBtn = $('genReportBtn');
+    const okfStatusBadge = $('okfStatusBadge');
+    const okfStatusText = $('okfStatusText');
 
     let ws = null;
+
+    // ─── OKF Status Check ────────────────────────────────────────
+    function checkOkfStatus() {
+      fetch('/api/okf/status').then(r => r.json()).then(data => {
+        if (data.error) {
+          okfStatusBadge.className = 'okf-status-badge empty';
+          okfStatusText.textContent = 'OKF: 0';
+          return;
+        }
+        
+        const total = data.total || 0;
+        const stale = data.stale || 0;
+        
+        if (total === 0) {
+          okfStatusBadge.className = 'okf-status-badge empty';
+          okfStatusText.textContent = 'OKF: Empty';
+        } else if (stale > 0) {
+          okfStatusBadge.className = 'okf-status-badge stale';
+          okfStatusText.textContent = `OKF: ${total} (${stale} stale)`;
+        } else {
+          okfStatusBadge.className = 'okf-status-badge fresh';
+          okfStatusText.textContent = `OKF: ${total} fresh`;
+        }
+      }).catch(() => {
+        okfStatusBadge.className = 'okf-status-badge empty';
+        okfStatusText.textContent = 'OKF: ?';
+      });
+    }
+    
+    // Check OKF status on load and every 30 seconds
+    checkOkfStatus();
+    setInterval(checkOkfStatus, 30000);
+    
+    // Click OKF badge to scroll to Knowledge Base
+    okfStatusBadge.addEventListener('click', () => {
+      document.querySelector('.bento-okf')?.scrollIntoView({ behavior: 'smooth' });
+    });
     let history = [];
     let historyIdx = -1;
 
