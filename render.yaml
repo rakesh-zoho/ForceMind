@@ -3,12 +3,8 @@ services:
     name: forcemind-dashboard
     runtime: node
     plan: free
-    buildCommand: >
-      npm install &&
-      npx playwright install chromium &&
-      sudo apt-get update &&
-      sudo apt-get install -y libgbm-dev libnss3 libatk-bridge2.0-0 libxkbcommon0 libgtk-3-0 libasound2
-    startCommand: node server/index.js
+    buildCommand: npm install
+    startCommand: bash start.sh
     healthCheckPath: /api/suites
     envVars:
       - key: NODE_ENV
