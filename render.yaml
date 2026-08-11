@@ -1,18 +1,14 @@
 services:
   - type: web
     name: forcemind-dashboard
-    runtime: node
+    runtime: docker
     plan: free
-    buildCommand: npm install && npx playwright install --with-deps chromium
-    startCommand: node server/index.js
-    healthCheckPath: /api/suites
+    dockerfilePath: Dockerfile
     envVars:
       - key: NODE_ENV
         value: production
       - key: DASHBOARD_PORT
         value: 10000
-      - key: PLAYWRIGHT_BROWSERS_PATH
-        value: 0
       # Add your secrets in Render Dashboard:
       # GITHUB_TOKEN
       # LLM_PROVIDER
