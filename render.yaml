@@ -11,6 +11,8 @@ services:
         value: production
       - key: DASHBOARD_PORT
         value: 10000
+      - key: PLAYWRIGHT_BROWSERS_PATH
+        value: 0
       # Add your secrets in Render Dashboard:
       # GITHUB_TOKEN
       # LLM_PROVIDER
