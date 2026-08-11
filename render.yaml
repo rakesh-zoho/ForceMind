@@ -3,7 +3,7 @@ services:
     name: forcemind-dashboard
     runtime: node
     plan: free
-    buildCommand: npm install
+    buildCommand: npm install && npx playwright install --with-deps chromium
     startCommand: node server/index.js
     healthCheckPath: /api/suites
     envVars:
