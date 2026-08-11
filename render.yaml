@@ -1,9 +1,11 @@
 services:
   - type: web
     name: forcemind-dashboard
-    runtime: docker
+    runtime: node
     plan: free
-    dockerfilePath: Dockerfile
+    buildCommand: npm install
+    startCommand: node server/index.js
+    healthCheckPath: /api/suites
     envVars:
       - key: NODE_ENV
         value: production
