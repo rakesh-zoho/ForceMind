@@ -3,7 +3,11 @@ services:
     name: forcemind-dashboard
     runtime: node
     plan: free
-    buildCommand: npm install
+    buildCommand: >
+      npm install &&
+      npx playwright install chromium &&
+      sudo apt-get update &&
+      sudo apt-get install -y libgbm-dev libnss3 libatk-bridge2.0-0 libxkbcommon0 libgtk-3-0 libasound2
     startCommand: node server/index.js
     healthCheckPath: /api/suites
     envVars:
@@ -11,6 +15,8 @@ services:
         value: production
       - key: DASHBOARD_PORT
         value: 10000
+      - key: PLAYWRIGHT_BROWSERS_PATH
+        value: /opt/render/.cache/ms-playwright
       # Add your secrets in Render Dashboard:
       # GITHUB_TOKEN
       # LLM_PROVIDER
